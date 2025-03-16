@@ -2,7 +2,7 @@
 
 Respositorio creado para el desarrollo de software del proyecto práctico de Sistemas Inteligentes.
 
-Integrantes:
+Integrantes
 
 Eva Castiñeiras Puente
 Miguel Diéguez Vilas
