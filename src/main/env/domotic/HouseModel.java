@@ -1,4 +1,4 @@
-//package src.env;
+package domotic;
 
 import jason.environment.grid.GridWorldModel;
 
@@ -238,7 +238,7 @@ public class HouseModel extends GridWorldModel {
     } 
 
 	boolean canMoveTo (int Ag, int x, int y) {
-		if (Ag < 1) {
+		if (Ag < 1jaso) {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) &&
 		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y));
 		} else { 
