@@ -18,8 +18,16 @@ connect(livingroom, hall, doorSal1).
 connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
+/*Initial prescription beliefs*/
+pauta(paracetamol, 8). //paracetamol
+pauta(ibuprofeno, 8). //ibuprofeno
+pauta(dalsi, 4). // dalsy
+pauta(frenadol, 6). //frenadol
+pauta(aspirina, 8).
+
 /* Initial goals */
 
+//Owner will send his prescription to the robot
 // Owner will simulate the behaviour of a person 
 // We need to characterize their digital twin (DT)
 // Owner must record the DT data periodically 
@@ -30,6 +38,8 @@ connect(livingroom, hallway, doorSal2).
 // Owner problems will randomly be activated on time
 // Owner will dialog with the nurse robot 
 // Owner will move randomly in the house by selecting places
+
+!send_pauta.
 
 !sit.
 
@@ -46,6 +56,11 @@ connect(livingroom, hallway, doorSal2).
 //!check_bored. 
 
 //+!init <- !sit ||| !open ||| !walk ||| !wakeup ||| !check_bored.
+
+!send_pauta <- 
+	.findall(pauta(X,Y), pauta(X,Y), L);
+	.println("Owner's prescription is: ", L);
+	.send(robot, tell, L).
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;

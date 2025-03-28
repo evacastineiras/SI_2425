@@ -112,5 +112,20 @@ shadowJar {
     doLast {
         println("You can run your application with: java -jar build/libs/jason-${project.name}-all.jar")
     }
+
+     tasks.register('cleanBuildAfterRun') {
+        doLast {
+            def buildDir = file("build")
+            if (buildDir.exists()) {
+                buildDir.deleteDir()
+                println "Carpeta 'build' eliminada después de la ejecución."
+            }
+        }
+    }
+
+    tasks.named('run') {
+        finalizedBy cleanBuildAfterRun
+    }
+
 }
 
