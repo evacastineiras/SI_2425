@@ -118,7 +118,7 @@ shadowJar {
             def buildDir = file("build")
             if (buildDir.exists()) {
                 buildDir.deleteDir()
-                println "Carpeta 'build' eliminada después de la ejecución."
+                println ("Carpeta 'build' eliminada después de la ejecución.")
             }
         }
     }
