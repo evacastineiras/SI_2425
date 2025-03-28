@@ -1,4 +1,4 @@
-//package src.env;
+package domotic;
 
 import jason.asSyntax.*;
 import jason.environment.Environment;
