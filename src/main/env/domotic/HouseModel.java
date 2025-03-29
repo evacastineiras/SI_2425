@@ -1,5 +1,4 @@
 package domotic;
-
 import jason.environment.grid.GridWorldModel;
 
 import java.util.HashMap;
@@ -51,15 +50,13 @@ public class HouseModel extends GridWorldModel {
 	public final String FRENADOL 	= "frenadol";
 	public final String ASPIRINA 	= "aspirina";
 
+	private Map<String,Integer> disponibilidadMedicamentos = new HashMap<>();
+
 	boolean kitAbierto   		= false; 	// Si el kit esta abierto
 	boolean llevandoMedicina 	= false; 	// Si el robot está sujetando una medicina
 
 
-	int disponibleParacetamol = 5;
-	int disponibleIbuprofeno = 5;
-	int disponibleDalsi = 5;
-	int disponibleFrenadol = 5;
-	int disponibleAspirina = 5;
+	
 
     
 	// Initialization of the objects Location on the domotic home scene 
@@ -174,7 +171,11 @@ public class HouseModel extends GridWorldModel {
 		addWall(GSize+2, GSize/2, GSize*2-1, GSize/2);   
 
 
-
+		disponibilidadMedicamentos.put(PARACETAMOL,	5);
+		disponibilidadMedicamentos.put(IBUPROFENO,	5);
+		disponibilidadMedicamentos.put(ASPIRINA,	5);
+		disponibilidadMedicamentos.put(DALSI,		5);
+		disponibilidadMedicamentos.put(FRENADOL,	5);
  		
 		 
      }
