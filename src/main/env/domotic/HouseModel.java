@@ -222,6 +222,7 @@ public class HouseModel extends GridWorldModel {
 
 	boolean openFridge() {
         if (!fridgeOpen) {
+			mostrarMedicinas();
             fridgeOpen = true;
             return true;
         } else {
@@ -238,24 +239,22 @@ public class HouseModel extends GridWorldModel {
         }
     }  
 	
-	boolean abrirKit() {
-        if (!kitAbierto) {
-            kitAbierto = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
+	boolean getMedicina(String medicina, int unidad){
+		if(disponibilidadMedicamentos.containsKey(medicina)){
+			disponibilidadMedicamentos.put(medicina,disponibilidadMedicamentos.get(medicina)-1);
+			System.out.println("Eliminado"+Integer.toString(unidad)+" unidad de" + medicina);
+			return true;
+		} else{
+			System.out.println("Error medicina no encontrada");
+			return false;
+		} 
+	}
 
-    boolean cerrarKit() {
-        if (kitAbierto) {
-            kitAbierto = false;
-            return true;
-        } else {
-            return false;
-        }
-    } 
-
+	boolean mostrarMedicinas(){
+		System.out.println("Las medicinas disponibles son:");
+		System.out.println(disponibilidadMedicamentos.toString());
+		return true;
+	}
   
 	/*
 	boolean canMoveTo (int Ag, int x, int y) {
