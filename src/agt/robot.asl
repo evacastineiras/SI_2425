@@ -55,6 +55,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 		!at(enfermera, fridge);
 		
 		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(paracetamol);
 		get(drug);    // Change it by a set of internal operations that recognize the drug an take it
 		              // maybe it need to take other products and change their place in the fridge
 		close(fridge);// Change it by an internal operation similar to fridge.close

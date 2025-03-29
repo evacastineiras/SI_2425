@@ -27,11 +27,11 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     public static final Literal oac4 = Literal.parseLiteral("at(owner,chair4)");
     public static final Literal oasf = Literal.parseLiteral("at(owner,sofa)");
     public static final Literal oad  = Literal.parseLiteral("at(owner,delivery)");
-	public static final Literal oak  = Literal.parseLiteral("at(owner,kit)");
+
+	//Literales nuevos
+	public static final Literal getMed = Literal.parseLiteral("getMedicina(X)");
 
 	public static final Literal gmp  = Literal.parseLiteral("getMedicina(paracetamol)");
-
-
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
 
@@ -293,7 +293,11 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		} else if (action.equals(gb)) {
             result = model.getDrug();
 
-        } else if (action.equals(hb)) {
+        } else if (action.getFunctor().equals("getMedicina")) {
+            Term xTerm = action.getTerm(0);
+			String medicina = ((Atom) xTerm).getFunctor();
+			result = model.getMedicina(medicina,1);
+		} else if (action.equals(hb)) {
             result = model.handInDrug();
 
         } else if (action.equals(sb)) {

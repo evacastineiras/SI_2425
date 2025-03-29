@@ -50,7 +50,7 @@ public class HouseModel extends GridWorldModel {
 	public final String FRENADOL 	= "frenadol";
 	public final String ASPIRINA 	= "aspirina";
 
-	private Map<String,Integer> disponibilidadMedicamentos = new HashMap<>();
+	public Map<String,Integer> disponibilidadMedicamentos = new HashMap<>();
 
 	boolean kitAbierto   		= false; 	// Si el kit esta abierto
 	boolean llevandoMedicina 	= false; 	// Si el robot está sujetando una medicina
@@ -242,7 +242,7 @@ public class HouseModel extends GridWorldModel {
 	boolean getMedicina(String medicina, int unidad){
 		if(disponibilidadMedicamentos.containsKey(medicina)){
 			disponibilidadMedicamentos.put(medicina,disponibilidadMedicamentos.get(medicina)-1);
-			System.out.println("Eliminado"+Integer.toString(unidad)+" unidad de" + medicina);
+			System.out.println("Eliminado "+Integer.toString(unidad)+" unidad de " + medicina);
 			return true;
 		} else{
 			System.out.println("Error medicina no encontrada");
@@ -367,6 +367,25 @@ public class HouseModel extends GridWorldModel {
 	
 	
     boolean getDrug() {
+        if (fridgeOpen && availableDrugs > 0 && !carryingDrug) {
+            availableDrugs--;
+            carryingDrug = true;
+            return true;
+        } else {  
+			if (fridgeOpen) {
+				System.out.println("The fridge is opened. ");
+			};
+			if (availableDrugs > 0){ 
+				System.out.println("The fridge has drugs enough. ");
+			};
+			if (!carryingDrug){ 
+				System.out.println("The robot is not bringing a drug. ");
+			};
+            return false;
+        }
+    }
+
+	boolean getDrug(String medicina) {
         if (fridgeOpen && availableDrugs > 0 && !carryingDrug) {
             availableDrugs--;
             carryingDrug = true;
