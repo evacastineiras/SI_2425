@@ -135,30 +135,30 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 	.println("Al estar en la misma habitación se debe mover directamente a: ", P);
 	move_towards(P).  
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
-		  connect(RoomAg, RoomP, Door) & not atDoor <-
+		  connect(RoomAg, RoomP, Door) & not atDoor(Door) <-
 	.println("<================== 3 =====================>");
 	.println("Al estar en una habitación contigua se mueve hacia la puerta: ", Door);
 	move_towards(Door); 
 	!go(P).                     
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
-		  connect(RoomAg, RoomP, Door) <- //& not atDoor <-
+		  connect(RoomAg, RoomP, Door) & not atDoor(Door) <- 
 	.println("<================== 3 =====================>");
 	.println("Al estar en la puerta de la habitación contigua se mueve hacia ", P);
 	move_towards(P); 
 	!go(P).       
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
-		  connect(Room, RoomP, DoorP) & not atDoor <-
-	.println("<================== 4 =====================>");
-	.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
-	move_towards(DoorR); 
-	!go(P). 
-+!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
-		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
-		  connect(Room, RoomP, DoorP) & atDoor <-
+		  connect(Room, RoomP, DoorP) & atDoor(DoorR) <-
 	.println("<================== 4 BIS =====================>");
 	.println("Se mueve a: ", DoorP, " para acceder a la habitación ", RoomP);
 	move_towards(DoorP); 
+	!go(P). 
++!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
+		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
+		  connect(Room, RoomP, DoorP) & not atDoor(DoorR) <-
+	.println("<================== 4 =====================>");
+	.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
+	move_towards(DoorR); 
 	!go(P). 
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP <- //& not atDoor <-
 	.println("Owner is at ", RoomAg,", that is not a contiguous room to ", RoomP);

@@ -54,14 +54,15 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
         Location lRobot = model.getAgPos(model.NURSE);
 		// get the robot room location
 		String RobotPlace = model.getRoom(lRobot);
-		addPercept("robot", Literal.parseLiteral("atRoom("+RobotPlace+")"));
+		System.out.println(RobotPlace);
+		addPercept("enfermera", Literal.parseLiteral("atRoom("+RobotPlace+")"));
         addPercept("owner", Literal.parseLiteral("atRoom(robot,"+RobotPlace+")"));
 		// get the owner location
         Location lOwner = model.getAgPos(model.OWNER);
 		// get the owner room location
 		String OwnerPlace = model.getRoom(lOwner);
 		addPercept("owner", Literal.parseLiteral("atRoom("+OwnerPlace+")"));  
-        addPercept("robot", Literal.parseLiteral("atRoom(owner,"+OwnerPlace+")"));
+        addPercept("enfermera", Literal.parseLiteral("atRoom(owner,"+OwnerPlace+")"));
 		
 		String doorName = null;
 		
@@ -92,9 +93,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		else if (lOwner.distance(model.lDoorBed2) == 0) doorName = "doorBed2";
 		else if (lOwner.distance(model.lDoorBed3) == 0) doorName = "doorBed3";
 		
-		System.out.println(model.lDoorBed1);
-		System.out.println(lOwner);
-		System.out.println(doorName);
+
 
 		if (doorName != null) {
 			addPercept("owner", Literal.parseLiteral("atDoor("+ doorName +")"));
@@ -105,8 +104,6 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
       
     void updateThingsPlace() {
 		// get the fridge location
-		String KitPlace = model.getRoom(model.lKit);
-		addPercept(Literal.parseLiteral("atRoom(kit, "+KitPlace+")"));
 		String fridgePlace = model.getRoom(model.lFridge);
 		addPercept(Literal.parseLiteral("atRoom(fridge, "+fridgePlace+")"));
 		String sofaPlace = model.getRoom(model.lSofa);
@@ -132,21 +129,18 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     /** creates the agents percepts based on the HouseModel */
     void updatePercepts() {
         // clear the percepts of the agents
-        clearPercepts("robot");
+        clearPercepts("enfermera");
         clearPercepts("owner");
 		
 		updateAgentsPlace();
 		updateThingsPlace(); 
 		
-		Location lRobot = model.getAgPos(0);
-		Location lOwner = model.getAgPos(1);
+		Location lRobot = model.getAgPos(model.NURSE);
+		Location lOwner = model.getAgPos(model.OWNER);
 		
-		if (lRobot.distance(model.lKit)<2) {
-            addPercept("robot", ak);
-        } 
 
         if (lRobot.distance(model.lFridge)<2) {
-            addPercept("robot", af);
+            addPercept("enfermera", af);
         } 
 		
         if (lOwner.distance(model.lFridge)<2) {
@@ -154,11 +148,11 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
         } 
 		
         if (lRobot.distance(lOwner)==1) {                                                     
-            addPercept("robot", ao);
+            addPercept("enfermera", ao);
         }
 
         if (lRobot.distance(model.lDeliver)==1) {
-            addPercept("robot", ad);
+            addPercept("enfermera", ad);
         }
 
         if (lOwner.distance(model.lChair1)==0) {
@@ -195,10 +189,10 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 
         // add beer "status" the percepts
         if (model.fridgeOpen) {
-            addPercept("robot", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
+            addPercept("enfermera", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
         }
         if (model.sipCount > 0) {
-            addPercept("robot", hob);
+            addPercept("enfermera", hob);
             addPercept("owner", hob);
         }
     }
@@ -230,8 +224,8 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 				break;
 			};
 			try {
-				if (ag.equals("robot")) {
-					System.out.println("[robot] is sitting");
+				if (ag.equals("enfermera")) {
+					System.out.println("[enfermera] is sitting");
 					result = model.sit(0,dest);
 				} else {
 					System.out.println("[owner] is sitting");
@@ -296,7 +290,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
  
             }
             try {
-                if (ag.equals("robot")) {
+                if (ag.equals("enfermera")) {
 					result = model.moveTowards(HouseModel.NURSE, dest);
 				} else {
 					result = model.moveTowards(HouseModel.OWNER, dest);

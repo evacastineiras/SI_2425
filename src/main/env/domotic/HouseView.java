@@ -132,7 +132,7 @@ public class HouseView extends GridWorldView {
             break;
         case HouseModel.FRIDGE:
             g.setColor(Color.lightGray); 
-			if (lRobot.isNeigbour(hmodel.lFridge)) { 
+			if (lRobot.isNeigbour(hmodel.lFridge) || (lOwner.isNeigbour(hmodel.lFridge))) { 
 				objPath = "/doc/openNevera.png";//currentDirectory.concat("/doc/openNevera.png");
 				drawImage(g, x, y, objPath);
 				g.setColor(Color.yellow);
