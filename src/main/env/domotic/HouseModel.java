@@ -31,8 +31,7 @@ public class HouseModel extends GridWorldModel {
     public static final int TABLE  	=  512;
     public static final int BED	   	= 1024;
 	public static final int KIT		= 2048; //Es en potencias porque se esta trabajando con bitmap
-	//public static final int DELIVERY, es el que ya viene implementado por almacén, pero yo cree una nueva
-	public static int[] mobiliarioSentable = {CHAIR,SOFA,BED};
+
 	private Map<Integer, Set<Location>> localizacionesVisitadas = new HashMap<>();
 	//almacena las localizaciones que recorre un agente
 
@@ -44,9 +43,7 @@ public class HouseModel extends GridWorldModel {
 	int availableDrugs  = 2; // how many drugs are available
                           
     boolean fridgeOpen   = false; 	// whether the fridge is open                                   
-    boolean carryingBeer = false; 	// whether the robot is carrying beer
     int sipCount        = 0; 		// how many sip the owner did, nos indica tambien si el owner tiene la cerveza en la mano, si aún le quedan sorbos (<10) pues aún la tiene en la mano
-    int availableBeers  = 2; 		// how many beers are available
 
 	public final String PARACETAMOL = "paracetamol";
 	public final String IBUPROFENO 	= "ibuprofeno";
@@ -274,8 +271,6 @@ public class HouseModel extends GridWorldModel {
 	// Now we must see if any furniture area is containing the positions x and y.  
 	boolean canMoveTo (int Ag, int x, int y) {
 		Location siguiente = new Location(x,y);
-		System.out.println(siguiente);
-		System.out.println(hayUnaCama(siguiente));
 		if (Ag == NURSE) {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) &&
 		           !aSofa.contains(siguiente) && !hasObject(CHAIR,x,y)) && !hayUnaCama(siguiente) && !hasObject(FRIDGE,x,y);
