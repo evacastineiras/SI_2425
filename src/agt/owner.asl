@@ -18,16 +18,8 @@ connect(livingroom, hall, doorSal1).
 connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
-/*Initial prescription beliefs*/
-pauta(paracetamol, 8). //paracetamol
-pauta(ibuprofeno, 8). //ibuprofeno
-pauta(dalsi, 4). // dalsy
-pauta(frenadol, 6). //frenadol
-pauta(aspirina, 8).
-
 /* Initial goals */
 
-//Owner will send his prescription to the robot
 // Owner will simulate the behaviour of a person 
 // We need to characterize their digital twin (DT)
 // Owner must record the DT data periodically 
@@ -38,8 +30,6 @@ pauta(aspirina, 8).
 // Owner problems will randomly be activated on time
 // Owner will dialog with the nurse robot 
 // Owner will move randomly in the house by selecting places
-
-!send_pauta.
 
 !sit.
 
@@ -57,10 +47,6 @@ pauta(aspirina, 8).
 
 //+!init <- !sit ||| !open ||| !walk ||| !wakeup ||| !check_bored.
 
-+!send_pauta : true <- 
-	.findall(pauta(X,Y), pauta(X,Y), L);
-	.println("Owner's prescription is: ", L);
-	.send(robot, tell, L).
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;
 	!check_bored;
@@ -96,9 +82,9 @@ pauta(aspirina, 8).
 	.random(X); .wait(X*7351+2000); // Owner takes a random amount of time to open the door 
 	!at(Ag, sofa);
 	sit(sofa);
-	//.wait(5000);
+	.wait(5000);
 	!at(Ag, fridge);
-	//.wait(10000);
+	.wait(10000);
 	!at(Ag, chair3);
 	sit(chair3);
 	-busy.
@@ -114,28 +100,28 @@ pauta(aspirina, 8).
 	!at(Ag, fridge);
 	.println("Owner is hungry and is at the fridge getting something"); 
 	//.println("He llegado al frigorifico");
-	//.wait(2000);
+	.wait(2000);
 	!at(Ag, chair3);
 	sit(chair3);
-	//.wait(4000);
+	.wait(4000);
 	!at(Ag, chair4);
 	sit(chair4);
-	//.wait(4000);
+	.wait(4000);
 	!at(Ag, chair2);
 	sit(chair2);
-	//.wait(4000);
+	.wait(4000);
 	!at(Ag, chair1);
 	sit(chair1);
-	//.wait(4000);
+	.wait(4000);
 	!at(Ag, sofa);
 	sit(sofa);
-	//.wait(10000);
+	.wait(10000);
 	!get(drug); 
-	//.wait(50000);
+	.wait(50000);
 	-busy.
 +!sit : .my_name(Ag) & busy <-
 	.println("Owner is doing something now and could not go to fridge");
-	//.wait(30000);
+	.wait(30000);
 	!sit.
 
 +!at(Ag, P) : at(Ag, P) <- 
@@ -151,7 +137,7 @@ pauta(aspirina, 8).
 	.println("Al estar en la misma habitación se debe mover directamente a: ", P);
 	move_towards(P).  
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
-		  connect(RoomAg, RoomP, Door) & atDoor <-
+		  connect(RoomAg, RoomP, Door) & atDoor(Door) <-
 	.println("Al estar en la puerta ", Door, " se dirige a ", P);                        
 	move_towards(P); 
 	!go(P).       
@@ -162,13 +148,13 @@ pauta(aspirina, 8).
 	!go(P).       
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
-		  connect(Room, RoomP, DoorP) & not atDoor(Door) <-
+		  connect(Room, RoomP, DoorP) & not atDoor(DoorR) <-
 	.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
 	move_towards(DoorR); 
 	!go(P). 
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
-		  connect(Room, RoomP, DoorP) & atDoor(Door) <-
+		  connect(Room, RoomP, DoorP) & atDoor(DoorR) <-
 	.println("Se mueve a: ", DoorP, " para ir a la habitación ", RoomP);
 	move_towards(DoorP); 
 	!go(P). 
@@ -210,3 +196,5 @@ pauta(aspirina, 8).
 +msg(M)[source(Ag)] : .my_name(Name)
    <- .print(Ag, " send ", Name, " the message: ", M);
       -msg(M).
+
+	  

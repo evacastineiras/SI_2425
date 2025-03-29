@@ -51,13 +51,13 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 	
     void updateAgentsPlace() {
 		// get the robot location
-        Location lRobot = model.getAgPos(1);
+        Location lRobot = model.getAgPos(model.NURSE);
 		// get the robot room location
 		String RobotPlace = model.getRoom(lRobot);
 		addPercept("robot", Literal.parseLiteral("atRoom("+RobotPlace+")"));
         addPercept("owner", Literal.parseLiteral("atRoom(robot,"+RobotPlace+")"));
 		// get the owner location
-        Location lOwner = model.getAgPos(0);
+        Location lOwner = model.getAgPos(model.OWNER);
 		// get the owner room location
 		String OwnerPlace = model.getRoom(lOwner);
 		addPercept("owner", Literal.parseLiteral("atRoom("+OwnerPlace+")"));  
@@ -65,6 +65,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		
 		String doorName = null;
 		
+
 		if (lRobot.distance(model.lDoorKit1) == 0) doorName = "doorKit1";
 		else if (lRobot.distance(model.lDoorKit2) == 0) doorName = "doorKit2";
 		else if (lRobot.distance(model.lDoorSal1) == 0) doorName = "doorSal1";
@@ -90,6 +91,10 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		else if (lOwner.distance(model.lDoorBed1) == 0) doorName = "doorBed1";
 		else if (lOwner.distance(model.lDoorBed2) == 0) doorName = "doorBed2";
 		else if (lOwner.distance(model.lDoorBed3) == 0) doorName = "doorBed3";
+		
+		System.out.println(model.lDoorBed1);
+		System.out.println(lOwner);
+		System.out.println(doorName);
 
 		if (doorName != null) {
 			addPercept("owner", Literal.parseLiteral("atDoor("+ doorName +")"));

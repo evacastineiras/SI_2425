@@ -82,7 +82,8 @@ public class HouseModel extends GridWorldModel {
 	Location lBed3		= new Location(GSize*2-3,0);
 	Location lBed1		= new Location(GSize+1, GSize*3/4);
 
-	// Initialization of the doors location on the domotic home scene   
+	// Initialization of the doors location on the domotic home scene 
+	Location lDoorHome 	= new Location(0, GSize-1);  
 	Location lDoorKit1	= new Location(0, GSize/2);
 	Location lDoorKit2	= new Location(GSize/2+1, GSize/2-1); 
 	Location lDoorSal1	= new Location(GSize/4, GSize-1);  
@@ -91,7 +92,7 @@ public class HouseModel extends GridWorldModel {
 	Location lDoorBath1	= new Location(GSize-1, GSize/4+1);
 	Location lDoorBed3	= new Location(GSize*2-1, GSize/4+1); 	
 	Location lDoorBed2	= new Location(GSize+1, GSize/4+1); 	
-	Location lDoorBath2	= new Location(GSize*2-4, GSize/2+1); 	
+	Location lDoorBath2	= new Location(GSize*2-4, GSize/2+1);
 	
 	// Initialization of the area modeling the home rooms      
 	Area kitchen 	= new Area(0, 0, GSize/2+1, GSize/2-1);
@@ -116,12 +117,11 @@ public class HouseModel extends GridWorldModel {
         super(2*GSize, GSize, 2);
                                                                            
         // Initial location for the owner and the nurse
-        setAgPos(NURSE, 2, 4);  
-		setAgPos(OWNER, GSize/2+2, GSize-3);
+        setAgPos(NURSE, 19, 10);  
+		setAgPos(OWNER, 23, 8);
 
 		// Location of the furniture of the house
         add(FRIDGE, lFridge); 
-		add(KIT, lKit); 
 		add(WASHER, lWasher); 
 		add(DOOR,   lDeliver); 
 		add(SOFA,   lSofa);
@@ -257,7 +257,7 @@ public class HouseModel extends GridWorldModel {
 		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y));
 		} else { 
 			
-			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && hasObject(BED,x,y));
+			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && !hasObject(BED,x,y));
 		}
 	}
 	
@@ -293,46 +293,41 @@ public class HouseModel extends GridWorldModel {
 
 
 	boolean moveTowards(int Ag, Location dest) {
-		Location posicionAgente = getAgPos(Ag);
-		Location posicionInical = getAgPos(Ag);
-				
+        Location r1 = getAgPos(Ag); 
+        Location r2 = getAgPos(Ag); 
 		
-		if (posicionAgente.distance(dest)>0) {
-			if (posicionAgente.x < dest.x && canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x+1, posicionAgente.y))) {
-				posicionAgente.x++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.x > dest.x && canMoveTo(Ag,posicionAgente.x-1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x-1, posicionAgente.y))) {
-				posicionAgente.x--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.y < dest.y && canMoveTo(Ag,posicionAgente.x,posicionAgente.y+1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y+1))) {
-				posicionAgente.y++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.y > dest.y &&  canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y-1))) {  
-				posicionAgente.y--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
+		if (r1.distance(dest)>0) {
+			if (r1.x < dest.x && canMoveTo(Ag,r1.x+1,r1.y)) {
+				r1.x++;
+			}
+			else if (r1.x > dest.x && canMoveTo(Ag,r1.x-1,r1.y)) {
+				r1.x--;
 			}
 			
-		}
-		if (posicionAgente.equals(posicionInical) && posicionAgente.distance(dest)>0) { // could not move the agent
-			if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x + 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x + 1, posicionAgente.y))) {
-				posicionAgente.x++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x - 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x - 1, posicionAgente.y))) {
-				posicionAgente.x--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y + 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y + 1))) {
-				posicionAgente.y++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
-			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y - 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y - 1))) {
-				posicionAgente.y--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);	
+			else if (r1.y < dest.y && r1.distance(dest)>0 && canMoveTo(Ag,r1.x,r1.y+1)) {
+				r1.y++;
 			}
-		}
-	
-		if (esAdyacente(posicionAgente, dest)){
-			localizacionesVisitadas.clear();
-		}
-		setAgPos(Ag, posicionAgente); // move the agent in the grid 
+			else if (r1.y > dest.y && r1.distance(dest)>0 && canMoveTo(Ag,r1.x,r1.y-1)) {  
+				r1.y--;
+			};
+        };
+		
+		if (r1 == r2 && r1.distance(dest)>0) { // could not move the agent
+			if (r1.x == dest.x && canMoveTo(Ag,r1.x+1,r1.y)) {
+				r1.x++;
+			}; 
+			if (r1.x == dest.x && canMoveTo(Ag,r1.x-1,r1.y)) {
+				r1.x--;
+			};
+			if (r1.y == dest.y && canMoveTo(Ag,r1.x,r1.y+1)) {
+				r1.y++;
+			};   
+			if (r1.y == dest.y && canMoveTo(Ag,r1.x,r1.y-1)) { 
+				r1.y--;
+			};			
+		};  
+		
+		setAgPos(Ag, r1); // move the agent in the grid 
 		
         return true;        
     }   

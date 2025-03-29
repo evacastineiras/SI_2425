@@ -152,6 +152,7 @@ public class HouseView extends GridWorldView {
     public void drawAgent(Graphics g, int x, int y, Color c, int id) {
         Location lRobot = hmodel.getAgPos(0);
         Location lOwner = hmodel.getAgPos(1);
+		
 		//Location lGuest = hmodel.getAgPos(2);
 		String objPath = currentDirectory;
 
