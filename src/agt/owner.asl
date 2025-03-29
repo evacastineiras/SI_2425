@@ -57,7 +57,7 @@ pauta(aspirina, 8).
 
 //+!init <- !sit ||| !open ||| !walk ||| !wakeup ||| !check_bored.
 
-!send_pauta <- 
++!send_pauta : true <- 
 	.findall(pauta(X,Y), pauta(X,Y), L);
 	.println("Owner's prescription is: ", L);
 	.send(robot, tell, L).
