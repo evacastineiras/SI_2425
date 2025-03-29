@@ -79,7 +79,14 @@ public class HouseModel extends GridWorldModel {
     Location lTable  	= new Location(GSize/2, GSize-3);
 	Location lBed2		= new Location(GSize+2, 0);
 	Location lBed3		= new Location(GSize*2-3,0);
-	Location lBed1		= new Location(GSize+1, GSize*3/4+1);
+	Location lBed1		= new Location(GSize+1, GSize*3/4);
+
+	//Creating areas for furnitures to make the robot unable to walk towards certain furniture
+	Area aSofa	 	= new Area(GSize/2, GSize-2, GSize/2+1, GSize-2);
+	Area aTable  	= new Area(GSize/2, GSize-3, GSize/2+1, GSize-3);
+	Area aBed2		= new Area(GSize+2, 0, GSize+2+1, 0+1);
+	Area aBed3		= new Area(GSize*2-3,0, GSize*2-3+1,0+1);
+	Area aBed1		= new Area(GSize+1, GSize*3/4, GSize+1+1, GSize*3/4+1);
 
 
 	// Initialization of the doors location on the domotic home scene 
@@ -251,7 +258,10 @@ public class HouseModel extends GridWorldModel {
         }
     } 
 
+  
+	/*
 	boolean canMoveTo (int Ag, int x, int y) {
+		
 		if (Ag == NURSE) {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) &&
 		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y)) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y);
@@ -259,6 +269,29 @@ public class HouseModel extends GridWorldModel {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
 		}
 	}
+	*/
+
+	// Now we must see if any furniture area is containing the positions x and y.  
+	boolean canMoveTo (int Ag, int x, int y) {
+		Location siguiente = new Location(x,y);
+		System.out.println(siguiente);
+		System.out.println(hayUnaCama(siguiente));
+		if (Ag == NURSE) {
+			return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) &&
+		           !aSofa.contains(siguiente) && !hasObject(CHAIR,x,y)) && !hayUnaCama(siguiente) && !hasObject(FRIDGE,x,y);
+		} else { 
+			return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
+		}
+	}
+	
+
+	boolean hayUnaCama(Location siguiente){
+
+		return aBed1.contains(siguiente) || aBed2.contains(siguiente) || aBed3.contains(siguiente);
+	}
+	
+
+
 	
 	public void añadirLocalizacionVisitada(int Ag, Location loc){
 		Set<Location> visitada = localizacionesVisitadas.get(Ag);
