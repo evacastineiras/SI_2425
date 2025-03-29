@@ -1,5 +1,5 @@
+//package src.env;
 package domotic;
-
 import jason.asSyntax.*;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
@@ -64,8 +64,8 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
         addPercept("robot", Literal.parseLiteral("atRoom(owner,"+OwnerPlace+")"));
 		
 		String doorName = null;
-		if (lRobot.distance(model.lDoorHome) == 0) doorName = "lDoorHome";
-		else if (lRobot.distance(model.lDoorKit1) == 0) doorName = "doorKit1";
+		
+		if (lRobot.distance(model.lDoorKit1) == 0) doorName = "doorKit1";
 		else if (lRobot.distance(model.lDoorKit2) == 0) doorName = "doorKit2";
 		else if (lRobot.distance(model.lDoorSal1) == 0) doorName = "doorSal1";
 		else if (lRobot.distance(model.lDoorSal2) == 0) doorName = "doorSal2";
@@ -80,8 +80,8 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		}
 
 		doorName = null;
-		if (lOwner.distance(model.lDoorHome) == 0) doorName = "lDoorHome";
-		else if (lOwner.distance(model.lDoorKit1) == 0) doorName = "doorKit1";
+		
+		if (lOwner.distance(model.lDoorKit1) == 0) doorName = "doorKit1";
 		else if (lOwner.distance(model.lDoorKit2) == 0) doorName = "doorKit2";
 		else if (lOwner.distance(model.lDoorSal1) == 0) doorName = "doorSal1";
 		else if (lOwner.distance(model.lDoorSal2) == 0) doorName = "doorSal2";
@@ -270,26 +270,25 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 				break;
 				case "table": dest = model.lTable; 
 				break;
-				case "doorBed_P": dest = model.lDoorBed_P; 
+				case "doorKit1": dest = model.lDoorKit1; 
 				break;            
-				case "doorBed_I1": dest = model.lDoorBed_I1; 
+				case "doorKit2": dest = model.lDoorKit2; 
 				break;
-				case "doorBed_I2": dest = model.lDoorBed_I2; 
+				case "doorSal1": dest = model.lDoorSal1; 
 				break;
-				case "doorKit_Hall": dest = model.lDoorKit_Hall; 
+				case "doorSal2": dest = model.lDoorSal2; 
 				break;
-				case "doorKit_Corr": dest = model.lDoorKit_HW; 
+				case "doorBath1": dest = model.lDoorBath1; 
 				break;
-				case "doorLivi_Hall": dest = model.lDoorLivi_Hall; 
+				case "doorBath2": dest = model.lDoorBath2; 
 				break;
-				case "doorLivi_Corr": dest = model.lDoorLivi_HW; 
+				case "doorBed1": dest = model.lDoorBed1; 
 				break;
-				case "doorBath_Bed1": dest = model.lDoorBath_BedP; 
+				case "doorBed2": dest = model.lDoorBed2; 
 				break;
-				case "doorBath_Corr": dest = model.lDoorBath_HW;                  
+				case "doorBed3": dest = model.lDoorBed3;                  
 				break;
-				case "kit": dest = model.lKit;                  
-				break; 
+ 
             }
             try {
                 if (ag.equals("robot")) {
