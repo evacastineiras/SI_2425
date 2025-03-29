@@ -182,9 +182,6 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
         if (lOwner.distance(model.lDeliver)==0) {
             addPercept("owner", oad);
         }
-		if (lOwner.distance(model.lKit)==1) {
-            addPercept("owner", oak);
-        }
 
         // add beer "status" the percepts
         if (model.fridgeOpen) {
