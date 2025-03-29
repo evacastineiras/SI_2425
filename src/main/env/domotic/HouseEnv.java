@@ -10,10 +10,10 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     // common literals
     public static final Literal of   = Literal.parseLiteral("open(fridge)");
     public static final Literal clf  = Literal.parseLiteral("close(fridge)");
-    public static final Literal gb   = Literal.parseLiteral("get(beer)");
-    public static final Literal hb   = Literal.parseLiteral("hand_in(beer)");
-    public static final Literal sb   = Literal.parseLiteral("sip(beer)");
-    public static final Literal hob  = Literal.parseLiteral("has(owner,beer)");
+    public static final Literal gb   = Literal.parseLiteral("get(drug)");
+    public static final Literal hb   = Literal.parseLiteral("hand_in(drug)");
+    public static final Literal sb   = Literal.parseLiteral("sip(drug)");
+    public static final Literal hob  = Literal.parseLiteral("has(owner,drug)");
 
     public static final Literal af   = Literal.parseLiteral("at(enfermera,fridge)");
     public static final Literal ao   = Literal.parseLiteral("at(enfermera,owner)");
@@ -185,7 +185,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 
         // add beer "status" the percepts
         if (model.fridgeOpen) {
-            addPercept("enfermera", Literal.parseLiteral("stock(beer,"+model.availableBeers+")"));
+            addPercept("enfermera", Literal.parseLiteral("stock(drug,"+model.availableDrugs+")"));
         }
         if (model.sipCount > 0) {
             addPercept("enfermera", hob);
@@ -290,21 +290,19 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
                 e.printStackTrace();
             }    
 		
-		} else if (action.equals(gmp)){
-			result = model.getMedicina(model.PARACETAMOL);
-        } else if (action.equals(gb)) {
-            result = model.getBeer();
+		} else if (action.equals(gb)) {
+            result = model.getDrug();
 
         } else if (action.equals(hb)) {
-            result = model.handInBeer();
+            result = model.handInDrug();
 
         } else if (action.equals(sb)) {
-            result = model.sipBeer();
+            result = model.sipDrug();
 
         } else if (action.getFunctor().equals("deliver")) {
             // wait 4 seconds to finish "deliver"
             try {
-                result = model.addBeer( (int)((NumberTerm)action.getTerm(1)).solve());
+                result = model.addDrug( (int)((NumberTerm)action.getTerm(1)).solve());
                 Thread.sleep(4000);
             } catch (Exception e) {
                 logger.info("Failed to execute action deliver!"+e);
@@ -321,5 +319,5 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
             } catch (Exception e) {}
         }
         return result;
-    }
+	}
 }

@@ -254,9 +254,9 @@ public class HouseModel extends GridWorldModel {
 	boolean canMoveTo (int Ag, int x, int y) {
 		if (Ag == NURSE) {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) &&
-		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y)) && !hasObject(BED,x,y);
+		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y)) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y);
 		} else { 
-			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && !hasObject(BED,x,y));
+			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
 		}
 	}
 	
@@ -338,78 +338,40 @@ public class HouseModel extends GridWorldModel {
 
 	
 	
-    boolean getBeer() {
-        if (fridgeOpen && availableBeers > 0 && !carryingBeer) {
-            availableBeers--;
-            carryingBeer = true;
+    boolean getDrug() {
+        if (fridgeOpen && availableDrugs > 0 && !carryingDrug) {
+            availableDrugs--;
+            carryingDrug = true;
             return true;
-        } else if (fridgeOpen && availableBeers < 0 && !carryingBeer){
-			System.out.println("There is no beers in the friedge.");
-			
-			return false;
-		}
-		
-		else {  
+        } else {  
 			if (fridgeOpen) {
 				System.out.println("The fridge is opened. ");
 			};
-			if (availableBeers > 0){ 
-				System.out.println("The fridge has Beers enough. ");
+			if (availableDrugs > 0){ 
+				System.out.println("The fridge has drugs enough. ");
 			};
-			if (!carryingBeer){ 
-				System.out.println("The robot is not bringing a Beer. ");
+			if (!carryingDrug){ 
+				System.out.println("The robot is not bringing a drug. ");
 			};
             return false;
         }
     }
 
-	boolean getMedicina(String medicina) { //Falta comprobar que hay disponibilidad de medicinas antes de cojerlas
-		if(kitAbierto && !llevandoMedicina){
-			if(medicina==PARACETAMOL){
-				disponibleParacetamol--;
-			}
-			else if(medicina==IBUPROFENO){
-				disponibleIbuprofeno--;
-			}
-			else if(medicina==DALSI){
-				disponibleDalsi--;
-			}
-			else if(medicina==FRENADOL){
-				disponibleFrenadol--;
-			}
-			else if(medicina==ASPIRINA){
-				disponibleAspirina--;
-			}else return false;
-			System.out.println(mostrarMedicinas());
-			return true;
-		}else{
-			System.out.println("O kit no abierto o se esta llevando medicina");
-			return false;
-		}
-    }
+	
 
-	String mostrarMedicinas(){
-		StringBuilder  toRet = new StringBuilder();
-		toRet.append("Kit:\n");
-		toRet.append(PARACETAMOL).append(": "+Integer.toString(disponibleParacetamol)).append("\n");
-		toRet.append(IBUPROFENO).append(": "+Integer.toString(disponibleIbuprofeno)).append("\n");
-		toRet.append(DALSI).append(": "+Integer.toString(disponibleDalsi)).append("\n");
-		toRet.append(FRENADOL).append(": "+Integer.toString(disponibleFrenadol)).append("\n");
-		toRet.append(ASPIRINA).append(": "+Integer.toString(disponibleAspirina));
-		return toRet.toString();
-	}
+	
 
-    boolean addBeer(int n) {
-        availableBeers += n;
+    boolean addDrug(int n) {
+        availableDrugs += n;
         //if (view != null)
         //    view.update(lFridge.x,lFridge.y);
         return true;
     }
 
-    boolean handInBeer() {
-        if (carryingBeer) {
+    boolean handInDrug() {
+        if (carryingDrug) {
             sipCount = 10;
-            carryingBeer = false;
+            carryingDrug = false;
             //if (view != null)
                 //view.update(lOwner.x,lOwner.y);
             return true;
@@ -418,7 +380,7 @@ public class HouseModel extends GridWorldModel {
         }
     }
 
-    boolean sipBeer() {
+    boolean sipDrug() {
         if (sipCount > 0) {
             sipCount--;
             //if (view != null)

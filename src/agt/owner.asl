@@ -136,7 +136,7 @@ pauta(aspirina, 8).
 
 +!at(Ag, P) : at(Ag, P) <- 
 	.println("Owner is at ",P);
-	.wait(5000).
+	.wait(500).
 +!at(Ag, P) : not at(Ag, P) <- 
 	.println("Going to ", P);
 	!go(P);                                        
