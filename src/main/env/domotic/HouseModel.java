@@ -40,7 +40,8 @@ public class HouseModel extends GridWorldModel {
     public static final int GSize = 12;     //Cells
 	public final int GridSize = 1080;    	//Width
 
-	
+	boolean carryingDrug = false; // whether the robot is carrying drug
+	int availableDrugs  = 2; // how many drugs are available
                           
     boolean fridgeOpen   = false; 	// whether the fridge is open                                   
     boolean carryingBeer = false; 	// whether the robot is carrying beer
@@ -81,17 +82,16 @@ public class HouseModel extends GridWorldModel {
 	Location lBed3		= new Location(GSize*2-3,0);
 	Location lBed1		= new Location(GSize+1, GSize*3/4);
 
-	// Initialization of the doors location on the domotic home scene 
-	Location lDoorHall 		= new Location(0, GSize-1);  
-	Location lDoorKit_Hall	= new Location(0, GSize/2);
-	Location lDoorKit_HW	= new Location(GSize/2+1, GSize/2-1); 
-	Location lDoorLivi_Hall	= new Location(GSize/4, GSize-1);  
-	Location lDoorLivi_HW	= new Location(GSize/2+2, GSize/2);
-	Location lDoorBed_P		= new Location(GSize+1, GSize/2);
-	Location lDoorBed_I1	= new Location(GSize+1, GSize/4+1);
-	Location lDoorBed_I2	= new Location(GSize*2-1, GSize/4+1);
-	Location lDoorBath_BedP	= new Location(GSize*2-4, GSize/2+1); 	 	 	
-	Location lDoorBath_HW	= new Location(GSize-1, GSize/4+1);
+	// Initialization of the doors location on the domotic home scene   
+	Location lDoorKit1	= new Location(0, GSize/2);
+	Location lDoorKit2	= new Location(GSize/2+1, GSize/2-1); 
+	Location lDoorSal1	= new Location(GSize/4, GSize-1);  
+	Location lDoorSal2	= new Location(GSize+1, GSize/2);
+	Location lDoorBed1	= new Location(GSize-1, GSize/2);
+	Location lDoorBath1	= new Location(GSize-1, GSize/4+1);
+	Location lDoorBed3	= new Location(GSize*2-1, GSize/4+1); 	
+	Location lDoorBed2	= new Location(GSize+1, GSize/4+1); 	
+	Location lDoorBath2	= new Location(GSize*2-4, GSize/2+1); 	
 	
 	// Initialization of the area modeling the home rooms      
 	Area kitchen 	= new Area(0, 0, GSize/2+1, GSize/2-1);
@@ -135,28 +135,42 @@ public class HouseModel extends GridWorldModel {
 		add(BED,	lBed3);
 
 		// Locations of doors
-		add(DOOR, lDoorHall);
-		add(DOOR, lDoorKit_Hall);
-		add(DOOR, lDoorKit_HW);
-		add(DOOR, lDoorLivi_Hall);
-		add(DOOR, lDoorLivi_HW);
-		add(DOOR, lDoorBed_P);
-		add(DOOR, lDoorBed_I1);
-		add(DOOR, lDoorBed_I2);
-		add(DOOR, lDoorBath_BedP);
-		add(DOOR, lDoorBath_HW);
+		add(DOOR, lDoorKit1);
+		add(DOOR, lDoorKit2);
+		add(DOOR, lDoorSal1);
+		add(DOOR, lDoorSal2);
+		add(DOOR, lDoorBath1);
+		add(DOOR, lDoorBath2);
+		add(DOOR, lDoorBed1);
+		add(DOOR, lDoorBed2);
+		add(DOOR, lDoorBed3);
+		
 
 		//Location of walls
-		addWall(GSize/2+1, 0, GSize/2+1, GSize/2-2);  		
-		addWall(GSize/2+1, GSize/4+1, GSize-2, GSize/4+1);   
-		addWall(GSize+2, GSize/4+1, GSize*2-2, GSize/4+1);   
+		//addWall(GSize/2+1, 0, GSize/2+1, GSize/2-2);  		
+		//addWall(GSize/2+1, GSize/4+1, GSize-2, GSize/4+1);   
+		/*addWall(GSize+2, GSize/4+1, GSize*2-2, GSize/4+1);   
 		addWall(GSize*2-6, 0, GSize*2-6, GSize/4);
 		addWall(GSize, 0, GSize, GSize/4+1);  
 		addWall(1, GSize/2, GSize/2+1, GSize/2);            
 		addWall(GSize/4, GSize/2+1, GSize/4, GSize-2);            
 		addWall(GSize, GSize/2, GSize, GSize-1);  
 		addWall(GSize*2-4, GSize/2+2, GSize*2-4, GSize-1);  
-		addWall(GSize/2+3, GSize/2, GSize*2-1, GSize/2);  
+		addWall(GSize/2+3, GSize/2, GSize*2-1, GSize/2); */
+
+		addWall(GSize/2+1, 0, GSize/2+1, GSize/2-2);  	
+		addWall(GSize/2+1, GSize/4+1, GSize-2, GSize/4+1);   
+		addWall(GSize+2, GSize/4+1, GSize*2-2, GSize/4+1);   
+		addWall(GSize*2-6, 0, GSize*2-6, GSize/4);
+		addWall(GSize, 0, GSize, GSize/4+1);  
+		addWall(1, GSize/2, GSize-1, GSize/2);           
+		addWall(GSize/4, GSize/2+1, GSize/4, GSize-2);            
+		addWall(GSize, GSize/2, GSize, GSize-1);  
+		addWall(GSize*2-4, GSize/2+2, GSize*2-4, GSize-1);  
+		addWall(GSize+2, GSize/2, GSize*2-1, GSize/2);   
+
+
+
  		
 		 
      }
