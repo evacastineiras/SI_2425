@@ -39,9 +39,9 @@ pauta(aspirina, 8).
 // Owner will dialog with the nurse robot 
 // Owner will move randomly in the house by selecting places
 
-!send_pauta.
-
 !sit.
+
+!send_pauta.
 
 !open.
 
