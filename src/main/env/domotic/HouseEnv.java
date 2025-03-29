@@ -15,10 +15,10 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     public static final Literal sb   = Literal.parseLiteral("sip(beer)");
     public static final Literal hob  = Literal.parseLiteral("has(owner,beer)");
 
-    public static final Literal af   = Literal.parseLiteral("at(robot,fridge)");
-    public static final Literal ao   = Literal.parseLiteral("at(robot,owner)");
-    public static final Literal ad   = Literal.parseLiteral("at(robot,delivery)");
-	public static final Literal ak   = Literal.parseLiteral("at(robot,kit)");
+    public static final Literal af   = Literal.parseLiteral("at(enfermera,fridge)");
+    public static final Literal ao   = Literal.parseLiteral("at(enfermera,owner)");
+    public static final Literal ad   = Literal.parseLiteral("at(enfermera,delivery)");
+
 	
     public static final Literal oaf  = Literal.parseLiteral("at(owner,fridge)");
     public static final Literal oac1 = Literal.parseLiteral("at(owner,chair1)");
@@ -30,8 +30,8 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 	public static final Literal oak  = Literal.parseLiteral("at(owner,kit)");
 
 	public static final Literal gmp  = Literal.parseLiteral("getMedicina(paracetamol)");
-	public static final Literal ok  = Literal.parseLiteral("abrir(kit)");
-	public static final Literal ck  = Literal.parseLiteral("cerrar(kit)");
+
+
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
 
@@ -235,11 +235,6 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 
         } else if (action.equals(clf)) { // clf = close(fridge)
             result = model.closeFridge();     
-        } else if (action.equals(ok)) { // of = open(fridge)
-            result = model.abrirKit();
-
-        } else if (action.equals(ck)) { // clf = close(fridge)
-            result = model.cerrarKit();
                                                                      
         } else if (action.getFunctor().equals("move_towards")) {
             String l = action.getTerm(0).toString();

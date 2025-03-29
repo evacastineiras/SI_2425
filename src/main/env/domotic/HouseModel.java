@@ -79,7 +79,8 @@ public class HouseModel extends GridWorldModel {
     Location lTable  	= new Location(GSize/2, GSize-3);
 	Location lBed2		= new Location(GSize+2, 0);
 	Location lBed3		= new Location(GSize*2-3,0);
-	Location lBed1		= new Location(GSize+1, GSize*3/4);
+	Location lBed1		= new Location(GSize+1, GSize*3/4+1);
+
 
 	// Initialization of the doors location on the domotic home scene 
 	Location lDoorHome 	= new Location(0, GSize-1);  
