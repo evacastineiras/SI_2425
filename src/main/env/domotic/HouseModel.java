@@ -75,7 +75,6 @@ public class HouseModel extends GridWorldModel {
     Location lWasher 	= new Location(GSize/3, 0);	
     Location lFridge 	= new Location(2, 0);
 
-	Location lKit 		= new Location(0, 0);
 
     Location lTable  	= new Location(GSize/2, GSize-3);
 	Location lBed2		= new Location(GSize+2, 0);

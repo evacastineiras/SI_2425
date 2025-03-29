@@ -54,7 +54,6 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
         Location lRobot = model.getAgPos(model.NURSE);
 		// get the robot room location
 		String RobotPlace = model.getRoom(lRobot);
-		System.out.println(RobotPlace);
 		addPercept("enfermera", Literal.parseLiteral("atRoom("+RobotPlace+")"));
         addPercept("owner", Literal.parseLiteral("atRoom(robot,"+RobotPlace+")"));
 		// get the owner location
