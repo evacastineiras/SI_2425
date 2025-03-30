@@ -427,6 +427,19 @@ public class HouseModel extends GridWorldModel {
         }
     }
 
+	boolean handInMedicina() {
+        if (carryingDrug) {
+            sipCount = 10;
+            carryingDrug = false;
+            //if (view != null)
+                //view.update(lOwner.x,lOwner.y);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     boolean sipDrug() {
         if (sipCount > 0) {
             sipCount--;

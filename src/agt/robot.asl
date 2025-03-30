@@ -61,6 +61,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 /* MISMA HORA Y MINUTO */
 +!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,M,SS) & T <= SS-S <-
     .println("Hora de tomar ",X, " son las: ",H,":",M,":",SS);
+	!has(owner,X);
     .abolish(consumo(X,T,H,M,S));
     +consumo(X,T,H,M,SS);
     !tomarMedicina.
@@ -68,6 +69,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 /* MISMA HORA DISTINTO MINUTO */
 +!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D <-
     .println("Hora de tomar ",X, " son las: ",H,":",MM,":",SS);
+	!has(owner,X);
     .abolish(consumo(X,T,H,M,S));
     +consumo(X,T,H,MM,SS);
     !tomarMedicina.
@@ -75,6 +77,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 /* DISTINA HORA DISTINTO MINUTO */
 +!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D <-
     .println("Hora de tomar ",X, " son las: ",HH,":",MM,":",SS);
+	!has(owner,X);
     .abolish(consumo(X,T,H,M,S));
     +consumo(X,T,HH,MM,SS);
     !tomarMedicina.
@@ -85,8 +88,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
     .wait(1000);
     !tomarMedicina.
 
-+!has(Ag, drug)[source(Ag)] : 
-	bringDrug(Ag) & free[source(self)] <- 
++!has(Ag, Medicina): free[source(self)] <- 
 		.println("FIRST RULE ====================================");
 		.wait(1000);
 		//!at(enfermera, owner); 
@@ -94,14 +96,32 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 		!at(enfermera, fridge);
 		
 		open(fridge); // Change it by an internal operation similar to fridge.open
-		getMedicina(paracetamol);
-		get(drug);    // Change it by a set of internal operations that recognize the drug an take it
-		              // maybe it need to take other products and change their place in the fridge
+		getMedicina(Medicina);
 		close(fridge);// Change it by an internal operation similar to fridge.close
 		!at(enfermera, Ag);
-		hand_in(drug);// In this case this operation could be external or internal their intention
+		mano_en(Medicina);	// In this case this operation could be external or internal their intention
+		              		// is to inform that the owner has the drug in his hand and could begin to drink
+							// remember that another drug has been consumed
+		.date(YY, MM, DD); .time(HH, NN, SS);
+		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
+		+free[source(self)]. 
+
+/*
++!has(Ag, Medicina)[source(Ag)] : 
+	bringDrug(Medicina) & free[source(self)] <- 
+		.println("FIRST RULE ====================================");
+		.wait(1000);
+		//!at(enfermera, owner); 
+    	-free[source(self)];      
+		!at(enfermera, fridge);
+		
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(Medicina);
+		close(fridge);// Change it by an internal operation similar to fridge.close
+		!at(enfermera, Ag);
+		hand_in(Medicina);// In this case this operation could be external or internal their intention
 		              // is to inform that the owner has the drug in his hand and could begin to drink
-		?has(Ag, drug);  // If the previous action is completed then a perception from environment must update
+		?has(Ag, Medicina);  // If the previous action is completed then a perception from environment must update
 		                 // the beliefs of the robot
 						 
 		// remember that another drug has been consumed
@@ -112,7 +132,7 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 // This rule was changed in order to find the deliver in a different location 
 // The door could be a good place to get the order and then go to the fridge
 // and when the drug is there update the beliefs
-
+*/
 +!has(Ag, drug)[source(Ag)] :
    	orderDrug(Ag) & free[source(self)] <- 
 		.println("SECOND RULE ====================================");

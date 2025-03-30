@@ -19,11 +19,11 @@ connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
 /*Initial prescription beliefs*/
-pauta(paracetamol, 20). //paracetamol
+pauta(paracetamol, 30). //paracetamol
 pauta(ibuprofeno, 40). //ibuprofeno
-pauta(dalsi, 10). // dalsy
+pauta(dalsi, 15). // dalsy
 pauta(frenadol, 50). //frenadol
-pauta(aspirina, 30).
+pauta(aspirina, 60).
 
 /* Initial goals */
 
@@ -103,6 +103,8 @@ pauta(aspirina, 30).
     !tomarMedicina.
 
 
+
+
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;
 	!check_bored;
@@ -172,8 +174,6 @@ pauta(aspirina, 30).
 	!at(Ag, sofa);
 	sit(sofa);
 	.wait(100);
-	!get(drug); 
-	.wait(500);
 	-busy.
 +!sit : .my_name(Ag) & busy <-
 	.println("Owner is doing something now and could not go to fridge");

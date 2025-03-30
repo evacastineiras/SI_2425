@@ -30,6 +30,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 
 	//Literales nuevos
 	public static final Literal getMed = Literal.parseLiteral("getMedicina(X)");
+	public static final Literal hm     = Literal.parseLiteral("en_mano(X)");
 
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
@@ -298,6 +299,9 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 			result = model.getMedicina(medicina,1);
 		} else if (action.equals(hb)) {
             result = model.handInDrug();
+
+        } else if (action.getFunctor().equals("mano_en")) {
+            result = model.handInMedicina();
 
         } else if (action.equals(sb)) {
             result = model.sipDrug();
