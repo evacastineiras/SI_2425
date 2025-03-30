@@ -96,7 +96,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     !tomarMedicina.
 
 +!aPorMedicina(Ag,Medicina): free[source(self)] & medicPend(L) <-
-		.println("FIRST RULE ====================================");
+		.println("A por medicina");
     	-free[source(self)];
 		!at(enfermera, fridge);
 		open(fridge); // Change it by an internal operation similar to fridge.open
@@ -235,45 +235,45 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println(Ag, " is at ",P);
 	.wait(500).
 +!at(Ag, P) : not at(Ag, P) <- 
-	.println("Going to ", P, " <=======================");  
+	//.println("Going to ", P, " <=======================");  
 	.wait(200);
 	!go(P);                                        
-	.println("Checking if is at ", P, " ============>");
+	//.println("Checking if is at ", P, " ============>");
 	!at(Ag, P).            
 	                                                   
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomAg) <- 
-	.println("<================== 1 =====================>");
-	.println("Al estar en la misma habitación se debe mover directamente a: ", P);
+	//.println("<================== 1 =====================>");
+	//.println("Al estar en la misma habitación se debe mover directamente a: ", P);
 	move_towards(P).  
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  connect(RoomAg, RoomP, Door) & not atDoor(Door) <-
-	.println("<================== 3 =====================>");
-	.println("Al estar en una habitación contigua se mueve hacia la puerta: ", Door);
+	//.println("<================== 3 =====================>");
+	//.println("Al estar en una habitación contigua se mueve hacia la puerta: ", Door);
 	move_towards(Door); 
 	!go(P).                     
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  connect(RoomAg, RoomP, Door) & not atDoor(Door) <- 
-	.println("<================== 3 =====================>");
-	.println("Al estar en la puerta de la habitación contigua se mueve hacia ", P);
+	//.println("<================== 3 =====================>");
+	//.println("Al estar en la puerta de la habitación contigua se mueve hacia ", P);
 	move_towards(P); 
 	!go(P).       
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
 		  connect(Room, RoomP, DoorP) & atDoor(DoorR) <-
-	.println("<================== 4 BIS =====================>");
-	.println("Se mueve a: ", DoorP, " para acceder a la habitación ", RoomP);
+	//.println("<================== 4 BIS =====================>");
+	//.println("Se mueve a: ", DoorP, " para acceder a la habitación ", RoomP);
 	move_towards(DoorP); 
 	!go(P). 
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
 		  connect(Room, RoomP, DoorP) & not atDoor(DoorR) <-
-	.println("<================== 4 =====================>");
-	.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
+	//.println("<================== 4 =====================>");
+	//.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
 	move_towards(DoorR); 
 	!go(P). 
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP <- //& not atDoor <-
-	.println("Owner is at ", RoomAg,", that is not a contiguous room to ", RoomP);
-	.println("<================== 5 =====================>");
+	//.println("Owner is at ", RoomAg,", that is not a contiguous room to ", RoomP);
+	//.println("<================== 5 =====================>");
 	move_towards(P).                                                          
 -!go(P) <- 
 	.println("¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿ WHAT A FUCK !!!!!!!!!!!!!!!!!!!!");

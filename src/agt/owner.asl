@@ -19,11 +19,11 @@ connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
 /*Initial prescription beliefs*/
-pauta(paracetamol, 30). //paracetamol
-pauta(ibuprofeno, 40). //ibuprofeno
-pauta(dalsi, 5). // dalsy
-pauta(frenadol, 50). //frenadol
-pauta(aspirina, 60).
+pauta(paracetamol, 15). //paracetamol
+pauta(ibuprofeno, 10). //ibuprofeno
+pauta(dalsi, 10). // dalsy
+pauta(frenadol, 40). //frenadol
+pauta(aspirina, 50).
 
 /* Initial goals */
 
@@ -98,7 +98,7 @@ pauta(aspirina, 60).
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
-    .println("Nada que tomar");
+    //.println("Nada que tomar");
     .wait(1000);
     !tomarMedicina.
 
@@ -190,33 +190,33 @@ pauta(aspirina, 60).
 	!at(Ag, P).            
 	                                                   
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomAg) <-                             
-	.println("Al estar en la misma habitación se debe mover directamente a: ", P);
+	//.println("Al estar en la misma habitación se debe mover directamente a: ", P);
 	move_towards(P).  
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  connect(RoomAg, RoomP, Door) & atDoor(Door) <-
-	.println("Al estar en la puerta ", Door, " se dirige a ", P);                        
+	//.println("Al estar en la puerta ", Door, " se dirige a ", P);                        
 	move_towards(P); 
 	!go(P).       
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  connect(RoomAg, RoomP, Door) & not atDoor(Door) <-
-	.println("Al estar en una habitación contigua se mueve hacia la puerta: ", Door);
+	//.println("Al estar en una habitación contigua se mueve hacia la puerta: ", Door);
 	move_towards(Door); 
 	!go(P).  
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
 		  connect(Room, RoomP, DoorP) & atDoor(DoorR) <-
-	.println("Se mueve a: ", DoorP, " para ir a la habitación ", RoomP);
+	//.println("Se mueve a: ", DoorP, " para ir a la habitación ", RoomP);
 	move_towards(DoorP); 
 	!go(P).      
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP &
 		  not connect(RoomAg, RoomP, _) & connect(RoomAg, Room, DoorR) &
 		  connect(Room, RoomP, DoorP) & not atDoor(DoorR) <-
-	.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
+	//.println("Se mueve a: ", DoorR, " para ir a la habitación contigua, ", Room);
 	move_towards(DoorR); 
 	!go(P). 
 
 +!go(P) : atRoom(RoomAg) & atRoom(P, RoomP) & not RoomAg == RoomP <-
-	.println("Owner is at ", RoomAg,", that is not a contiguous room to ", RoomP);
+	//.println("Owner is at ", RoomAg,", that is not a contiguous room to ", RoomP);
 	move_towards(P).                                                          
 -!go(P) <- .println("Something goes wrong......").
 	                                                                        

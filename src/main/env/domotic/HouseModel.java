@@ -171,11 +171,11 @@ public class HouseModel extends GridWorldModel {
 		addWall(GSize+2, GSize/2, GSize*2-1, GSize/2);   
 
 
-		disponibilidadMedicamentos.put(PARACETAMOL,	5);
-		disponibilidadMedicamentos.put(IBUPROFENO,	5);
-		disponibilidadMedicamentos.put(ASPIRINA,	5);
-		disponibilidadMedicamentos.put(DALSI,		5);
-		disponibilidadMedicamentos.put(FRENADOL,	5);
+		disponibilidadMedicamentos.put(PARACETAMOL,	50);
+		disponibilidadMedicamentos.put(IBUPROFENO,	50);
+		disponibilidadMedicamentos.put(ASPIRINA,	50);
+		disponibilidadMedicamentos.put(DALSI,		50);
+		disponibilidadMedicamentos.put(FRENADOL,	50);
  		
 		 
      }
