@@ -72,6 +72,8 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 		open(fridge); // Change it by an internal operation similar to fridge.open
 		.belief(medicPend(L));
 		!cogerTodaMedicina(L);
+		.abolish(medicPend(L));
+		+medicPend([]);
 		close(fridge);
 		!at(enfermera, Ag);
 		//mano_en(L);
