@@ -107,8 +107,7 @@ public class HouseView extends GridWorldView {
             break;              
 		case HouseModel.DOOR:
 			g.setColor(Color.lightGray);
-			if (lRobot.equals(loc) | lRobot.isNeigbour(loc) | 
-			lOwner.equals(loc) | lOwner.isNeigbour(loc)) {// | 
+			if (lRobot.equals(loc) | lOwner.equals(loc) ) {// | 
 				//lGuest.equals(loc) | lGuest.isNeigbour(loc)) {
 				objPath = "/doc/openDoor2.png";//currentDirectory.concat("/doc/openDoor2.png");
 				drawScaledImage(g, x, y, objPath, 75, 100);

@@ -281,7 +281,6 @@ public class HouseModel extends GridWorldModel {
 	
 
 	boolean hayUnaCama(Location siguiente){
-
 		return aBed1.contains(siguiente) || aBed2.contains(siguiente) || aBed3.contains(siguiente);
 	}
 	

@@ -21,26 +21,14 @@ connect(livingroom, hallway, doorSal2).
 
 // initially, robot is free
 free.
-
-// initially, I believe that there is some drug in the fridge
-available(drug, fridge).
-
-// my owner should not consume more than 10 drugs a day :-)
-limit(drug,10).  
                  
-too_much(B, Ag) :-
-   .date(YY, MM, DD) &
-   .count(consumed(YY, MM, DD, _, _, _, B, Ag), QtdB) &   
-   limit(B, Limit) &    
-   .println(Ag," has consumed ", QtdB, " ", B, " their limit is: ", Limit) &
-   QtdB > Limit-1. 
+
    
 answer(Request, "It will be nice to check the weather forecast, don't?.") :-
 	.substring("tiempo", Request).  
 	
 answer(Request, "I don't understand what are you talking about.").
 
-bringDrug(Ag) :- available(drug, fridge) & not too_much(drug, Ag).
 
 orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).  
 
@@ -60,7 +48,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
-/* MISMA HORA Y MINUTO */
+/* MISMA HORA Y MINUTO */						  
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & T <= SS-S & medicPend(Med) <-
     .println("Hora de tomar ",Medicina, " son las: ",H,":",M,":",SS);
 	//!has(owner,X);
@@ -70,25 +58,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     +consumo(Medicina,T,H,M,SS);
     !tomarMedicina.
 
-/* MISMA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D & medicPend(Med)<-
-    .println("Hora de tomar ",Medicina, " son las: ",H,":",MM,":",SS);
-	// !has(owner,X);
-	!addMedicina(Medicina);
-	!!aPorMedicina(owner,Medicina);
-    .abolish(consumo(Medicina,T,H,M,S));
-    +consumo(Medicina,T,H,MM,SS);
-    !tomarMedicina.
 
-/* DISTINA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D & medicPend(Med)<-
-    .println("Hora de tomar ",Medicina, " son las: ",HH,":",MM,":",SS);
-	// !has(owner,X);
-	!addMedicina(Medicina);
-	!!aPorMedicina(owner,Medicina);
-    .abolish(consumo(Medicina,T,H,M,S));
-    +consumo(Medicina,T,HH,MM,SS);
-    !tomarMedicina.
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
@@ -123,114 +93,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!cogerTodaMedicina([]) <-
 		.println("He cogido toda la medicina").
 
-+!has(Ag, Medicina): free[source(self)] <- 
-		.println("FIRST RULE ====================================");
-		.wait(1000);
-		//!at(enfermera, owner); 
-    	-free[source(self)];      
-		!at(enfermera, fridge);
-		
-		open(fridge); // Change it by an internal operation similar to fridge.open
-		getMedicina(Medicina);
-		close(fridge);// Change it by an internal operation similar to fridge.close
-		!at(enfermera, Ag);
-		mano_en(Medicina);	// In this case this operation could be external or internal their intention
-		              		// is to inform that the owner has the drug in his hand and could begin to drink
-							// remember that another drug has been consumed
-		.date(YY, MM, DD); .time(HH, NN, SS);
-		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
-		+free[source(self)]. 
 
-+!has(Ag, Medicina): not free[source(self)] <- 
-		.println("SECOND RULE ====================================");
-		.wait(1000);
-		//!at(enfermera, owner); 
-    	-free[source(self)];      
-		!at(enfermera, fridge);
-		
-		open(fridge); // Change it by an internal operation similar to fridge.open
-		getMedicina(Medicina);
-		close(fridge);// Change it by an internal operation similar to fridge.close
-		!at(enfermera, Ag);
-		mano_en(Medicina);	// In this case this operation could be external or internal their intention
-		              		// is to inform that the owner has the drug in his hand and could begin to drink
-							// remember that another drug has been consumed
-		.date(YY, MM, DD); .time(HH, NN, SS);
-		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
-		+free[source(self)]. 
-/*
-+!has(Ag, Medicina)[source(Ag)] : 
-	bringDrug(Medicina) & free[source(self)] <- 
-		.println("FIRST RULE ====================================");
-		.wait(1000);
-		//!at(enfermera, owner); 
-    	-free[source(self)];      
-		!at(enfermera, fridge);
-		
-		open(fridge); // Change it by an internal operation similar to fridge.open
-		getMedicina(Medicina);
-		close(fridge);// Change it by an internal operation similar to fridge.close
-		!at(enfermera, Ag);
-		hand_in(Medicina);// In this case this operation could be external or internal their intention
-		              // is to inform that the owner has the drug in his hand and could begin to drink
-		?has(Ag, Medicina);  // If the previous action is completed then a perception from environment must update
-		                 // the beliefs of the robot
-						 
-		// remember that another drug has been consumed
-		.date(YY, MM, DD); .time(HH, NN, SS);
-		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
-		+free[source(self)].  
-
-// This rule was changed in order to find the deliver in a different location 
-// The door could be a good place to get the order and then go to the fridge
-// and when the drug is there update the beliefs
-*/
-+!has(Ag, drug)[source(Ag)] :
-   	orderDrug(Ag) & free[source(self)] <- 
-		.println("SECOND RULE ====================================");
-		.wait(1000);
-   		-free[source(self)]; 
-		!at(enfermera, fridge);
-		.send(repartidor, achieve, order(drug, 5)); 
-		!at(enfermera, delivery);     // go to deliver area and wait there.
-		.wait(delivered);
-		!at(enfermera, fridge);       // go to fridge 
-		deliver(Product,5);
-		+available(drug, fridge); 
-		+free[source(self)];
-		.println("Trying to bring drug after order it");
-		!has(Ag, drug)[source(Ag)].               
-
-// A different rule provided to not block the agent with contradictory petitions
-
-+!has(Ag, drug)[source(Ag)] :
-   	not free[source(self)] <- 
-		.println("THIRD RULE ====================================");
-		.println("The robot is busy and cann't attend the order now."); 
-		.wait(4000);
-		!has(Ag, drug).   
-		
-+!has(Ag, drug)[source(Ag)] 
-   :  too_much(drug, Ag) & limit(drug, L) <-
-      	.println("FOURTH RULE ====================================");
-		.wait(1000);
-		.concat("The Department of Health does not allow me to give you more than ", L,
-                " drugs a day! I am very sorry about that!", M);
-		.send(Ag, tell, msg(M)).
-
-// If some problem appears, we manage it by informing the intention that fails 
-// and the goal is trying to satisfy. Of course we can provide or manage the fail
-// better by using error annotations. Remember examples on slides when introducing
-// intentions as a kind of exception      
-
--!has(Name, P) <-
-//   :  true
-// No condition is the same that a constant true condition
-	.println("FIFTH RULE ====================================");
-	.wait(1000);
-	.current_intention(I);
-    .println("Failed to achieve goal: !has(", Name, " , ", P, ").");
-	.println("Current intention is: ", I).
 
 +!at(Ag, P) : at(Ag, P) <- 
 	.println(Ag, " is at ",P);
@@ -307,5 +170,135 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +?time(T) : true
   <-  time.check(T).
 
+/* MISMA HORA DISTINTO MINUTO 
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D & medicPend(Med)<-
+    .println("Hora de tomar ",Medicina, " son las: ",H,":",MM,":",SS);
+	// !has(owner,X);
+	!addMedicina(Medicina);
+	!!aPorMedicina(owner,Medicina);
+    .abolish(consumo(Medicina,T,H,M,S));
+    +consumo(Medicina,T,H,MM,SS);
+    !tomarMedicina.
 
+/* DISTINA HORA DISTINTO MINUTO 
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D & medicPend(Med)<-
+    .println("Hora de tomar ",Medicina, " son las: ",HH,":",MM,":",SS);
+	// !has(owner,X);
+	!addMedicina(Medicina);
+	!!aPorMedicina(owner,Medicina);
+    .abolish(consumo(Medicina,T,H,M,S));
+    +consumo(Medicina,T,HH,MM,SS);
+    !tomarMedicina.
+*/
+/*
++!has(Ag, Medicina): free[source(self)] <- 
+		.println("FIRST RULE ====================================");
+		.wait(1000);
+		//!at(enfermera, owner); 
+    	-free[source(self)];      
+		!at(enfermera, fridge);
+		
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(Medicina);
+		close(fridge);// Change it by an internal operation similar to fridge.close
+		!at(enfermera, Ag);
+		mano_en(Medicina);	// In this case this operation could be external or internal their intention
+		              		// is to inform that the owner has the drug in his hand and could begin to drink
+							// remember that another drug has been consumed
+		.date(YY, MM, DD); .time(HH, NN, SS);
+		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
+		+free[source(self)]. 
 
++!has(Ag, Medicina): not free[source(self)] <- 
+		.println("SECOND RULE ====================================");
+		.wait(1000);
+		//!at(enfermera, owner); 
+    	-free[source(self)];      
+		!at(enfermera, fridge);
+		
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(Medicina);
+		close(fridge);// Change it by an internal operation similar to fridge.close
+		!at(enfermera, Ag);
+		mano_en(Medicina);	// In this case this operation could be external or internal their intention
+		              		// is to inform that the owner has the drug in his hand and could begin to drink
+							// remember that another drug has been consumed
+		.date(YY, MM, DD); .time(HH, NN, SS);
+		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
+		+free[source(self)]. 
+/*
++!has(Ag, Medicina)[source(Ag)] : 
+	bringDrug(Medicina) & free[source(self)] <- 
+		.println("FIRST RULE ====================================");
+		.wait(1000);
+		//!at(enfermera, owner); 
+    	-free[source(self)];      
+		!at(enfermera, fridge);
+		
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(Medicina);
+		close(fridge);// Change it by an internal operation similar to fridge.close
+		!at(enfermera, Ag);
+		hand_in(Medicina);// In this case this operation could be external or internal their intention
+		              // is to inform that the owner has the drug in his hand and could begin to drink
+		?has(Ag, Medicina);  // If the previous action is completed then a perception from environment must update
+		                 // the beliefs of the robot
+						 
+		// remember that another drug has been consumed
+		.date(YY, MM, DD); .time(HH, NN, SS);
+		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
+		+free[source(self)].  
+
+// This rule was changed in order to find the deliver in a different location 
+// The door could be a good place to get the order and then go to the fridge
+// and when the drug is there update the beliefs
+*/
+/*
++!has(Ag, drug)[source(Ag)] :
+   	orderDrug(Ag) & free[source(self)] <- 
+		.println("SECOND RULE ====================================");
+		.wait(1000);
+   		-free[source(self)]; 
+		!at(enfermera, fridge);
+		.send(repartidor, achieve, order(drug, 5)); 
+		!at(enfermera, delivery);     // go to deliver area and wait there.
+		.wait(delivered);
+		!at(enfermera, fridge);       // go to fridge 
+		deliver(Product,5);
+		+available(drug, fridge); 
+		+free[source(self)];
+		.println("Trying to bring drug after order it");
+		!has(Ag, drug)[source(Ag)].               
+
+// A different rule provided to not block the agent with contradictory petitions
+
++!has(Ag, drug)[source(Ag)] :
+   	not free[source(self)] <- 
+		.println("THIRD RULE ====================================");
+		.println("The robot is busy and cann't attend the order now."); 
+		.wait(4000);
+		!has(Ag, drug).   
+		
++!has(Ag, drug)[source(Ag)] 
+   :  too_much(drug, Ag) & limit(drug, L) <-
+      	.println("FOURTH RULE ====================================");
+		.wait(1000);
+		.concat("The Department of Health does not allow me to give you more than ", L,
+                " drugs a day! I am very sorry about that!", M);
+		.send(Ag, tell, msg(M)).
+
+// If some problem appears, we manage it by informing the intention that fails 
+// and the goal is trying to satisfy. Of course we can provide or manage the fail
+// better by using error annotations. Remember examples on slides when introducing
+// intentions as a kind of exception      
+
+-!has(Name, P) <-
+//   :  true
+// No condition is the same that a constant true condition
+	.println("FIFTH RULE ====================================");
+	.wait(1000);
+	.current_intention(I);
+    .println("Failed to achieve goal: !has(", Name, " , ", P, ").");
+	.println("Current intention is: ", I).
+
+*/
