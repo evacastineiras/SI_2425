@@ -240,7 +240,7 @@ public class HouseModel extends GridWorldModel {
     }  
 	
 	boolean getMedicina(String medicina, int unidad){
-		if(disponibilidadMedicamentos.containsKey(medicina)){
+		if(disponibilidadMedicamentos.containsKey(medicina) && fridgeOpen && disponibilidadMedicamentos.get(medicina)>0 && !carryingDrug){
 			disponibilidadMedicamentos.put(medicina,disponibilidadMedicamentos.get(medicina)-1);
 			System.out.println("Eliminado "+Integer.toString(unidad)+" unidad de " + medicina);
 			return true;

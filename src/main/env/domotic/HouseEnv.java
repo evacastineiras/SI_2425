@@ -31,7 +31,6 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 	//Literales nuevos
 	public static final Literal getMed = Literal.parseLiteral("getMedicina(X)");
 
-	public static final Literal gmp  = Literal.parseLiteral("getMedicina(paracetamol)");
 
     static Logger logger = Logger.getLogger(HouseEnv.class.getName());
 

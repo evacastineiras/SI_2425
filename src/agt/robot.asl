@@ -47,6 +47,43 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 /* Plans */
 
 
++!inicia : true <- 
+    .print("Iniciando recordatorios de medicamentos...");
+    .time(H, M, S);
+    .findall(consumo(X,T,H,M,S), pauta(X,T), L);
+    !iniciarContadores(L);
+    !tomarMedicina.
++!iniciarContadores([Car|Cdr]) <-
+    +Car;
+    !iniciarContadores(Cdr).
++!iniciarContadores([]) <- .print("Inicialización completada").
+
+/* MISMA HORA Y MINUTO */
++!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,M,SS) & T <= SS-S <-
+    .println("Hora de tomar ",X, " son las: ",H,":",M,":",SS);
+    .abolish(consumo(X,T,H,M,S));
+    +consumo(X,T,H,M,SS);
+    !tomarMedicina.
+
+/* MISMA HORA DISTINTO MINUTO */
++!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D <-
+    .println("Hora de tomar ",X, " son las: ",H,":",MM,":",SS);
+    .abolish(consumo(X,T,H,M,S));
+    +consumo(X,T,H,MM,SS);
+    !tomarMedicina.
+
+/* DISTINA HORA DISTINTO MINUTO */
++!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D <-
+    .println("Hora de tomar ",X, " son las: ",HH,":",MM,":",SS);
+    .abolish(consumo(X,T,H,M,S));
+    +consumo(X,T,HH,MM,SS);
+    !tomarMedicina.
+
+/* NADA QUE TOMAR */
++!tomarMedicina <- 
+    .println("Nada que tomar");
+    .wait(1000);
+    !tomarMedicina.
 
 +!has(Ag, drug)[source(Ag)] : 
 	bringDrug(Ag) & free[source(self)] <- 
@@ -199,41 +236,4 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
   <-  time.check(T).
 
 
-+!inicia : true <- 
-    .print("Iniciando recordatorios de medicamentos...");
-    .time(H, M, S);
-    .findall(consumo(X,T,H,M,S), pauta(X,T), L);
-    !iniciarContadores(L);
-    !tomarMedicina.
-+!iniciarContadores([Car|Cdr]) <-
-    +Car;
-    !iniciarContadores(Cdr).
-+!iniciarContadores([]) <- .print("Inicialización completada").
-
-/* MISMA HORA Y MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,M,SS) & T <= SS-S <-
-    .println("Hora de tomar ",X, " son las: ",H,":",M,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,M,SS);
-    !tomarMedicina.
-
-/* MISMA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",H,":",MM,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,MM,SS);
-    !tomarMedicina.
-
-/* DISTINA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",HH,":",MM,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,HH,MM,SS);
-    !tomarMedicina.
-
-/* NADA QUE TOMAR */
-+!tomarMedicina <- 
-    .println("Nada que tomar");
-    .wait(1000);
-    !tomarMedicina.
 
