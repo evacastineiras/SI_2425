@@ -65,7 +65,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .println("Hora de tomar ",Medicina, " son las: ",H,":",M,":",SS);
 	//!has(owner,X);
 	!addMedicina(Medicina);
-	!aPorMedicina(owner,Medicina);
+	!!aPorMedicina(owner,Medicina);
     .abolish(consumo(Medicina,T,H,M,S));
     +consumo(Medicina,T,H,M,SS);
     !tomarMedicina.
@@ -75,7 +75,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .println("Hora de tomar ",Medicina, " son las: ",H,":",MM,":",SS);
 	// !has(owner,X);
 	!addMedicina(Medicina);
-	!aPorMedicina(owner,Medicina);
+	!!aPorMedicina(owner,Medicina);
     .abolish(consumo(Medicina,T,H,M,S));
     +consumo(Medicina,T,H,MM,SS);
     !tomarMedicina.
@@ -85,7 +85,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .println("Hora de tomar ",Medicina, " son las: ",HH,":",MM,":",SS);
 	// !has(owner,X);
 	!addMedicina(Medicina);
-	!aPorMedicina(owner,Medicina);
+	!!aPorMedicina(owner,Medicina);
     .abolish(consumo(Medicina,T,H,M,S));
     +consumo(Medicina,T,HH,MM,SS);
     !tomarMedicina.
@@ -95,11 +95,12 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .wait(1000);
     !tomarMedicina.
 
-+!aPorMedicina(Ag,Medicina): free[source(self)] & medicPend(L) <-
++!aPorMedicina(Ag,Medicina): free[source(self)]<-
 		.println("A por medicina");
     	-free[source(self)];
 		!at(enfermera, fridge);
 		open(fridge); // Change it by an internal operation similar to fridge.open
+		.belief(medicPend(L));
 		!cogerTodaMedicina(L);
 		close(fridge);
 		!at(enfermera, Ag);
