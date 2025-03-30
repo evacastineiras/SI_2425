@@ -60,7 +60,8 @@ pauta(aspirina, 8).
 +!send_pauta : true  <-
 	.findall(pauta(X,Y), pauta(X,Y), L);
 	.print("Mi pauta: ", L);
-	.send(enfermera, tell, L).
+	.send(enfermera, tell, L);
+	.send(enfermera,achieve,inicia).
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;
