@@ -44,6 +44,8 @@ bringDrug(Ag) :- available(drug, fridge) & not too_much(drug, Ag).
 
 orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).  
 
+medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
+
 /* Plans */
 
 
@@ -59,34 +61,66 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
 /* MISMA HORA Y MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,M,SS) & T <= SS-S <-
-    .println("Hora de tomar ",X, " son las: ",H,":",M,":",SS);
-	!has(owner,X);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,M,SS);
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & T <= SS-S & medicPend(Med) <-
+    .println("Hora de tomar ",Medicina, " son las: ",H,":",M,":",SS);
+	//!has(owner,X);
+	!addMedicina(Medicina);
+	!aPorMedicina(owner,Medicina);
+    .abolish(consumo(Medicina,T,H,M,S));
+    +consumo(Medicina,T,H,M,SS);
     !tomarMedicina.
 
 /* MISMA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",H,":",MM,":",SS);
-	!has(owner,X);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,MM,SS);
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D & medicPend(Med)<-
+    .println("Hora de tomar ",Medicina, " son las: ",H,":",MM,":",SS);
+	// !has(owner,X);
+	!addMedicina(Medicina);
+	!aPorMedicina(owner,Medicina);
+    .abolish(consumo(Medicina,T,H,M,S));
+    +consumo(Medicina,T,H,MM,SS);
     !tomarMedicina.
 
 /* DISTINA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",HH,":",MM,":",SS);
-	!has(owner,X);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,HH,MM,SS);
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D & medicPend(Med)<-
+    .println("Hora de tomar ",Medicina, " son las: ",HH,":",MM,":",SS);
+	// !has(owner,X);
+	!addMedicina(Medicina);
+	!aPorMedicina(owner,Medicina);
+    .abolish(consumo(Medicina,T,H,M,S));
+    +consumo(Medicina,T,HH,MM,SS);
     !tomarMedicina.
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
-    .println("Nada que tomar");
     .wait(1000);
     !tomarMedicina.
+
++!aPorMedicina(Ag,Medicina): free[source(self)] & medicPend(L) <-
+		.println("FIRST RULE ====================================");
+    	-free[source(self)];
+		!at(enfermera, fridge);
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		!cogerTodaMedicina(L);
+		close(fridge);
+		!at(enfermera, Ag);
+		//mano_en(L);
+		+free[source(self)].
+
++!aPorMedicina(Ag,Medicina): not free[source(self)]<-
+		.println("Añadido ", Medicina, " a la lista").
+
++!addMedicina(Medicina): medicPend(Med) <-
+	.concat(Med,[Medicina],L);
+	-medicPend(_);
+	+medicPend(L).
+
++!cogerTodaMedicina([Car|Cdr]) <-
+		.println("Cojo la medicina ",Car);
+		getMedicina(Car);
+		!cogerTodaMedicina(Cdr).
+
++!cogerTodaMedicina([]) <-
+		.println("He cogido toda la medicina").
 
 +!has(Ag, Medicina): free[source(self)] <- 
 		.println("FIRST RULE ====================================");
@@ -106,6 +140,23 @@ orderDrug(Ag) :- not available(drug, fridge) & not too_much(drug, Ag).
 		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
 		+free[source(self)]. 
 
++!has(Ag, Medicina): not free[source(self)] <- 
+		.println("SECOND RULE ====================================");
+		.wait(1000);
+		//!at(enfermera, owner); 
+    	-free[source(self)];      
+		!at(enfermera, fridge);
+		
+		open(fridge); // Change it by an internal operation similar to fridge.open
+		getMedicina(Medicina);
+		close(fridge);// Change it by an internal operation similar to fridge.close
+		!at(enfermera, Ag);
+		mano_en(Medicina);	// In this case this operation could be external or internal their intention
+		              		// is to inform that the owner has the drug in his hand and could begin to drink
+							// remember that another drug has been consumed
+		.date(YY, MM, DD); .time(HH, NN, SS);
+		+consumed(YY, MM, DD, HH, NN, SS, drug, Ag);
+		+free[source(self)]. 
 /*
 +!has(Ag, Medicina)[source(Ag)] : 
 	bringDrug(Medicina) & free[source(self)] <- 
