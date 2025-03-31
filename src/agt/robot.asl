@@ -51,7 +51,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 /* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & T-10 <= SS-S & medicPend(Med) <-
-    .println("Hora de tomar SEGUNDO",Medicina, " son las: ",H,":",M,":",SS);
+    .println("Hora de tomar distinto segundo",Medicina, " son las: ",H,":",M,":",SS);
 	//!has(owner,X);
 	!addMedicina(Medicina);
 	!!aPorMedicina(owner,Medicina);
@@ -62,33 +62,24 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 		+consumo(Medicina,T,H,M,SS+10);
 	}
 	
-	
-    !tomarMedicina.
-/* MISMA HORA DISTINTO MINUTO */ // actual=10:55 perfecta=11:20 	D=60-55=5  	15-20 <= 55+S		// d=60-58 == 2     15-10 <= 56+2
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & MM \==M & D = 60-S & T-10 <= SS+D & medicPend(Med)<-
-    .println("Hora de tomar ",Medicina, " son las: ",H,":",MM,":",SS);
-	// !has(owner,X);
-	!addMedicina(Medicina);
-	!!aPorMedicina(owner,Medicina);
-    .abolish(consumo(Medicina,T,H,M,S));
 
-	if(SS>=50){ //  Si es hora: 8:50 --> 50+10=60 --> 00 del siguiente --> -50 segundos y +1 minuto ===> 9:00
-		+consumo(Medicina,T,H,M+1,SS-50);	
-	}else{
-		+consumo(Medicina,T,H,MM,SS+10);
-	}
-	
-    
     !tomarMedicina.
 
-/* DISTINA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(HH,MM,SS) & MM \== M & D = 60-S & T-10 <= SS+D & medicPend(Med)<-
-    .println("Hora de tomar ",Medicina, " son las: ",HH,":",MM,":",SS);
-	// !has(owner,X);
-	!addMedicina(Medicina);
-	!!aPorMedicina(owner,Medicina);
+
+
+
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & MM \== M & medicPend(Med) & (T-10 = SS-S | S<10 & S+50 == SS)<-
+    .println("Hora de tomar distinto minuto ",Medicina, " son las: ",H,":",MM,":",SS);
+    !addMedicina(Medicina);
+    !!aPorMedicina(owner,Medicina);
     .abolish(consumo(Medicina,T,H,M,S));
-    +consumo(Medicina,T,HH,MM,SS+10);
+
+    if(SS>=50){
+     //  Si es hora: 8:50 --> 50+10=60 --> 00 del siguiente --> -50 segundos y +1 minuto ===> 9:00
+        +consumo(Medicina,T,H,M+1,SS-50);
+    }else{
+        +consumo(Medicina,T,H,MM,SS+10);
+    }
     !tomarMedicina.
 
 
