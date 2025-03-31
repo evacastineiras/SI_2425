@@ -19,9 +19,9 @@ connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
 /*Initial prescription beliefs*/
-pauta(paracetamol, 15). //paracetamol
-pauta(ibuprofeno, 10). //ibuprofeno
-pauta(dalsi, 10). // dalsy
+pauta(paracetamol, 25). //paracetamol
+pauta(ibuprofeno, 30). //ibuprofeno
+pauta(dalsi, 15). // dalsy
 pauta(frenadol, 40). //frenadol
 pauta(aspirina, 50).
 
