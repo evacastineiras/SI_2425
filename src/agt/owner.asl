@@ -46,6 +46,8 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 !send_pauta.
 
+!aMiBola.
+
 !open.
 
 !walk.
@@ -114,6 +116,41 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	}
 	!tomarMedicina.
 
++!aPorMedicina  <-
+	+busy;
+	!at(owner, fridge);
+	.send(enfermera,achieve,cancelarMedicacion);
+	open(fridge); // Change it by an internal operation similar to fridge.open
+	.belief(medicPend(L));
+	!cogerTodaMedicina(L);
+	.abolish(medicPend(L));
+	+medicPend([]);
+	close(fridge);
+	!enviarMedicinaPendiente;
+	-busy.
+
++!aPorMedicina: busy <-
+		.println("Añadido ", Medicina, " a la lista").
+
++!cancelarMedicacion <-
+	.print("Me prohiben ir a por la medicacion");
+	.drop_intention(aPorMedicina).
+
++!enviarMedicinaPendiente: medicPend(L) <-
+	.send(enfermera,achieve,medicinaRecibida(L)).
+
+
+
+
+
++!cogerTodaMedicina([Car|Cdr]) <-
+		.println("Cojo la medicina ",Car);
+		getMedicina(Car);
+		!cogerTodaMedicina(Cdr).
+
++!cogerTodaMedicina([]) <-
+		.println("He cogido toda la medicina").
+
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
     .wait(10);
@@ -128,6 +165,14 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.concat(Med,[Medicina],L);
 	-medicPend(_);
 	+medicPend(L).
+
++!aMiBola : true
+   <- .random(X); .wait(X*5000+2000);
+   	  .print("VOY YO A POR LA MEDICINA");
+	  .drop_all_intentions;
+	  !aPorMedicina;
+	  !sit;
+	  !aMiBola.
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;

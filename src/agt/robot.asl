@@ -63,7 +63,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	//!has(owner,X);
 	!addMedicina(Medicina);
-	!!aPorMedicina(owner,Medicina,H,M,S);
+	!!aPorMedicina(Medicina,H,M,S);
     .abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 		+consumo(Medicina,T,H,M+1,S+T-60);	
@@ -81,7 +81,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	
 	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
     !addMedicina(Medicina);
-    !!aPorMedicina(owner,Medicina,H,M,S);
+    !!aPorMedicina(Medicina,H,M,S);
     .abolish(consumo(Medicina,T,H,M,S));
     if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 		+consumo(Medicina,T,H,M+1,S+T-60);	
@@ -97,10 +97,11 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .wait(10);
     !tomarMedicina.
 
-+!aPorMedicina(Ag,Medicina,H,M,S): free[source(self)]<-
++!aPorMedicina(Medicina,H,M,S): free[source(self)]<-
 		.println("A por medicina");
     	-free[source(self)];
 		!at(enfermera, fridge);
+		.send(owner,achieve,cancelarMedicacion);
 		open(fridge); // Change it by an internal operation similar to fridge.open
 		.belief(medicPend(L));
 		!cogerTodaMedicina(L);
@@ -108,14 +109,17 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 		+medicPend([]);
 		close(fridge);
 		!comprobarHora(L,H,M,S);
-		
-		// while hora actual < hora perfecta {at(enfermera,owner)} 
-		// dar Medicina
-			
-		//mano_en(L);
 		+free[source(self)].
 
++!aPorMedicina(Medicina,_,_,_): not free[source(self)]<-
+		.println("Añadido ", Medicina, " a la lista").
+
++!cancelarMedicacion <-
+	.print("Me prohiben ir a por la medicacion");
+	.drop_intention(aPorMedicina(_,_,_,_)).
+
 +!comprobarHora([Med|MedL],H,M,S) <- // Car es consumo(X,T,H,M,S) 
+		!at(enfermera, owner);	
 		.time(HH,MM,SS);
 		if(SS<S) { // where vl(X) is a belief    4 58    
 			.print("Esperando a la hora perfecta... Hora perfecta: ",H,":",M,":",S);
@@ -138,8 +142,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println("Dando al owner la medicina: ", Med, " a la hora: H:",HH,":",MM,":",SS);
 	!darMedicina(MedL,H,M,S).
 
-+!aPorMedicina(Ag,Medicina,_,_,_): not free[source(self)]<-
-		.println("Añadido ", Medicina, " a la lista").
+
 
 +!addMedicina(Medicina): medicPend(Med) <-
 	.concat(Med,[Medicina],L);
@@ -154,7 +157,10 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!cogerTodaMedicina([]) <-
 		.println("He cogido toda la medicina").
 
-
++!medicinaRecibida(L) <- 
+	.println("Medicamentos actualizados");
+	-medicPend(_);
+	+medicPend(L).
 
 +!at(Ag, P) : at(Ag, P) <- 
 	.println(Ag, " is at ",P);
