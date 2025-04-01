@@ -10,10 +10,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     // common literals
     public static final Literal of   = Literal.parseLiteral("open(fridge)");
     public static final Literal clf  = Literal.parseLiteral("close(fridge)");
-    public static final Literal gb   = Literal.parseLiteral("get(drug)");
-    public static final Literal hb   = Literal.parseLiteral("hand_in(drug)");
-    public static final Literal sb   = Literal.parseLiteral("sip(drug)");
-    public static final Literal hob  = Literal.parseLiteral("has(owner,drug)");
+
 
     public static final Literal af   = Literal.parseLiteral("at(enfermera,fridge)");
     public static final Literal ao   = Literal.parseLiteral("at(enfermera,owner)");
@@ -26,7 +23,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     public static final Literal oac3 = Literal.parseLiteral("at(owner,chair3)");
     public static final Literal oac4 = Literal.parseLiteral("at(owner,chair4)");
     public static final Literal oasf = Literal.parseLiteral("at(owner,sofa)");
-    public static final Literal oad  = Literal.parseLiteral("at(owner,delivery)");
+
 
 	//Literales nuevos
 	public static final Literal getMed = Literal.parseLiteral("getMedicina(X)");
@@ -179,18 +176,9 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 			System.out.println("[owner] is at Sofa.");
         }
 
-        if (lOwner.distance(model.lDeliver)==0) {
-            addPercept("owner", oad);
-        }
 
-        // add beer "status" the percepts
-        if (model.fridgeOpen) {
-            addPercept("enfermera", Literal.parseLiteral("stock(drug,"+model.availableDrugs+")"));
-        }
-        if (model.sipCount > 0) {
-            addPercept("enfermera", hob);
-            addPercept("owner", hob);
-        }
+
+
     }
 
 
@@ -290,32 +278,14 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
                 e.printStackTrace();
             }    
 		
-		} else if (action.equals(gb)) {
-            result = model.getDrug();
-
-        } else if (action.getFunctor().equals("getMedicina")) {
+		} else if (action.getFunctor().equals("getMedicina")) {
             Term xTerm = action.getTerm(0);
 			String medicina = ((Atom) xTerm).getFunctor();
 			result = model.getMedicina(medicina,1);
-		} else if (action.equals(hb)) {
-            result = model.handInDrug();
-
-        } else if (action.getFunctor().equals("mano_en")) {
+		} else if (action.getFunctor().equals("mano_en")) {
             result = model.handInMedicina();
 
-        } else if (action.equals(sb)) {
-            result = model.sipDrug();
-
-        } else if (action.getFunctor().equals("deliver")) {
-            // wait 4 seconds to finish "deliver"
-            try {
-                result = model.addDrug( (int)((NumberTerm)action.getTerm(1)).solve());
-                Thread.sleep(4000);
-            } catch (Exception e) {
-                logger.info("Failed to execute action deliver!"+e);
-            }
-
-        } else {
+        }else {
             logger.info("Failed to execute action "+action);
         }
 

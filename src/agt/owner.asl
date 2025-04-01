@@ -319,8 +319,6 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	  .send(enfermera, tell, chat("What's the weather in Ourense?"));
       !check_bored.
 
-+msg(M)[source(Ag)] : .my_name(Name)
-   <- .print(Ag, " send ", Name, " the message: ", M);
-      -msg(M).
+
 
 

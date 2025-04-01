@@ -147,17 +147,6 @@ public class HouseModel extends GridWorldModel {
 		add(DOOR, lDoorBed3);
 		
 
-		//Location of walls
-		//addWall(GSize/2+1, 0, GSize/2+1, GSize/2-2);  		
-		//addWall(GSize/2+1, GSize/4+1, GSize-2, GSize/4+1);   
-		/*addWall(GSize+2, GSize/4+1, GSize*2-2, GSize/4+1);   
-		addWall(GSize*2-6, 0, GSize*2-6, GSize/4);
-		addWall(GSize, 0, GSize, GSize/4+1);  
-		addWall(1, GSize/2, GSize/2+1, GSize/2);            
-		addWall(GSize/4, GSize/2+1, GSize/4, GSize-2);            
-		addWall(GSize, GSize/2, GSize, GSize-1);  
-		addWall(GSize*2-4, GSize/2+2, GSize*2-4, GSize-1);  
-		addWall(GSize/2+3, GSize/2, GSize*2-1, GSize/2); */
 
 		addWall(GSize/2+1, 0, GSize/2+1, GSize/2-2);  	
 		addWall(GSize/2+1, GSize/4+1, GSize-2, GSize/4+1);   
@@ -256,17 +245,7 @@ public class HouseModel extends GridWorldModel {
 		return true;
 	}
   
-	/*
-	boolean canMoveTo (int Ag, int x, int y) {
-		
-		if (Ag == NURSE) {
-			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) &&
-		           !hasObject(SOFA,x,y) && !hasObject(CHAIR,x,y)) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y);
-		} else { 
-			return (isFree(x,y) && !hasObject(WASHER,x,y) && !hasObject(TABLE,x,y) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
-		}
-	}
-	*/
+
 
 	// Now we must see if any furniture area is containing the positions x and y.  
 	boolean canMoveTo (int Ag, int x, int y) {
@@ -361,71 +340,8 @@ public class HouseModel extends GridWorldModel {
 		setAgPos(Ag, posicionAgente); // move the agent in the grid 
 		
         return true;        
-    }    
-
+    }   
 	
-	
-    boolean getDrug() {
-        if (fridgeOpen && availableDrugs > 0 && !carryingDrug) {
-            availableDrugs--;
-            carryingDrug = true;
-            return true;
-        } else {  
-			if (fridgeOpen) {
-				System.out.println("The fridge is opened. ");
-			};
-			if (availableDrugs > 0){ 
-				System.out.println("The fridge has drugs enough. ");
-			};
-			if (!carryingDrug){ 
-				System.out.println("The robot is not bringing a drug. ");
-			};
-            return false;
-        }
-    }
-
-	boolean getDrug(String medicina) {
-        if (fridgeOpen && availableDrugs > 0 && !carryingDrug) {
-            availableDrugs--;
-            carryingDrug = true;
-            return true;
-        } else {  
-			if (fridgeOpen) {
-				System.out.println("The fridge is opened. ");
-			};
-			if (availableDrugs > 0){ 
-				System.out.println("The fridge has drugs enough. ");
-			};
-			if (!carryingDrug){ 
-				System.out.println("The robot is not bringing a drug. ");
-			};
-            return false;
-        }
-    }
-
-	
-
-	
-
-    boolean addDrug(int n) {
-        availableDrugs += n;
-        //if (view != null)
-        //    view.update(lFridge.x,lFridge.y);
-        return true;
-    }
-
-    boolean handInDrug() {
-        if (carryingDrug) {
-            sipCount = 10;
-            carryingDrug = false;
-            //if (view != null)
-                //view.update(lOwner.x,lOwner.y);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 	boolean handInMedicina() {
         if (carryingDrug) {
             sipCount = 10;
@@ -437,72 +353,5 @@ public class HouseModel extends GridWorldModel {
             return false;
         }
     }
-
-
-    boolean sipDrug() {
-        if (sipCount > 0) {
-            sipCount--;
-            //if (view != null)
-                //view.update(lOwner.x,lOwner.y);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-	 /**
-     * Verifica si un agente está adyacente a una localización dada.
-     *
-     * Este método comprueba si la posición de un agente (Ag) se encuentra en una de las
-     * posiciones adyacentes a la localización proporcionada (loc). Las posiciones adyacentes
-     * se definen como las posiciones directamente arriba, abajo, izquierda o derecha de la
-     * localización dada.
-     *
-     * @param Ag El identificador del agente.
-     * @param loc La localización que se va a verificar si está adyacente al agente.
-     * @return true si el agente está en una posición adyacente a la localización;
-     *         false en caso contrario.
-     */
-    boolean agIsAdyacent (int Ag, Location loc)
-    {
-        Location agentPos = getAgPos(Ag);
-        if(agentPos.x == loc.x-1 && agentPos.y == loc.y //está a la izquierda de la localización.
-            | agentPos.x == loc.x+1 && agentPos.y == loc.y //está a la derecha de la localización.
-            | agentPos.x == loc.x && agentPos.y == loc.y-1 //está a la arriba de la localización.
-            | agentPos.x == loc.x && agentPos.y == loc.y+1 //está a la abajo de la localización.
-            ){
-                return true;
-            } else
-                {
-                    return false;
-                }      
-    }
-
-    /**
-     * Verifica si dos localizaciones son adyacentes.
-     *
-     * Este método determina si las localizaciones l1 y l2 son adyacentes. Las localizaciones
-     * se consideran adyacentes si están en una de las posiciones directamente arriba, abajo,
-     * izquierda o derecha una de la otra.
-     *
-     * @param l1 La primera localización.
-     * @param l2 La segunda localización.
-     * @return true si las dos localizaciones son adyacentes; false en caso contrario.
-     */
-    boolean LocIsAdyacent (Location l1, Location l2)
-    {
-        if(l1.x == l2.x-1 && l1.y == l2.y //está a la izquierda de la localización.
-            | l1.x == l2.x+1 && l1.y == l2.y //está a la derecha de la localización.
-            | l1.x == l2.x && l1.y == l2.y-1 //está a la arriba de la localización.
-            | l1.x == l2.x && l1.y == l2.y+1 //está a la abajo de la localización.
-            ){
-                return true;
-            } else
-                {
-                    return false;
-                }      
-    }
-
-
 
 }
