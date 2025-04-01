@@ -21,10 +21,11 @@ connect(livingroom, hallway, doorSal2).
 /*Initial prescription beliefs*/
 pauta(paracetamol, 25). //paracetamol
 pauta(ibuprofeno, 30). //ibuprofeno
-pauta(dalsi, 15). // dalsy
+pauta(dalsi, 25). // dalsy
 pauta(frenadol, 40). //frenadol
 pauta(aspirina, 50).
 
+medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
 /* Initial goals */
 
 //Owner will send his prescription to the robot
@@ -39,9 +40,12 @@ pauta(aspirina, 50).
 // Owner will dialog with the nurse robot 
 // Owner will move randomly in the house by selecting places
 
+
+
 !sit.
 
 !send_pauta.
+
 
 !open.
 
@@ -64,45 +68,51 @@ pauta(aspirina, 50).
 	.send(enfermera,achieve,inicia);
 	!inicia.
 
+
 +!inicia : true <- 
     .print("Iniciando recordatorios de medicamentos...");
     .time(H, M, S);
     .findall(consumo(X,T,H,M,S), pauta(X,T), L);
     !iniciarContadores(L);
     !tomarMedicina.
-+!iniciarContadores([Car|Cdr]) <-
-    +Car;
++!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
+    if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+		+consumo(Medicina,T,H,M+1,S+T-60);
+		.print(consumo(Medicina,T,H,M+1,S+T-60));	
+	}else{
+		+consumo(Medicina,T,H,M,S+T);
+		.print(consumo(Medicina,T,H,M,S+T));
+	}
+	
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
-/* MISMA HORA Y MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,M,SS) & T <= SS-S <-
-    .println("Hora de tomar ",X, " son las: ",H,":",M,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,M,SS);
-    !tomarMedicina.
+/* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
+	.println("MISMO MINUTO");
+	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);
+	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);
+	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+		+consumo(Medicina,T,H,M+1,S+T-60);	
+	}else{
+		+consumo(Medicina,T,H,M,S+T);
+	}.
 
-/* MISMA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(H,MM,SS) & M \== MM & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",H,":",MM,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,H,MM,SS);
-    !tomarMedicina.
-
-/* DISTINA HORA DISTINTO MINUTO */
-+!tomarMedicina: pauta(X,T) & consumo(X,T,H,M,S) & .time(HH,MM,SS) & H \== HH & D = 60-S & T <= SS+D <-
-    .println("Hora de tomar ",X, " son las: ",HH,":",MM,":",SS);
-    .abolish(consumo(X,T,H,M,S));
-    +consumo(X,T,HH,MM,SS);
-    !tomarMedicina.
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
+    .println("DISTINTO MINUTO");
+    //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);	
+	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
+	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+		+consumo(Medicina,T,H,M+1,S+T-60);	
+	}else{
+		+consumo(Medicina,T,H,M,S+T);
+	}.
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
-    //.println("Nada que tomar");
-    .wait(1000);
+    .wait(10);
     !tomarMedicina.
-
-
 
 
 +!wakeup : .my_name(Ag) & not busy <-
