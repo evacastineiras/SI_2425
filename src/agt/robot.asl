@@ -57,7 +57,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 
 /* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 10 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
 	.println("MISMO MINUTO");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
@@ -74,7 +74,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
     !tomarMedicina.
 
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<10 & 10 >= (60-SS)+(S) & medicPend(Med) <-
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
     .println("DISTINTO MINUTO");
     //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);	
@@ -115,17 +115,24 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 		//mano_en(L);
 		+free[source(self)].
 
-+!comprobarHora([Med|_],H,M,S) <- // Car es consumo(X,T,H,M,S) 
++!comprobarHora([Med|MedL],H,M,S) <- // Car es consumo(X,T,H,M,S) 
 		.time(HH,MM,SS);
 		if(SS<S) { // where vl(X) is a belief    4 58    
 			.print("Esperando a la hora perfecta... Hora perfecta: ",H,":",M,":",S);
 			.print("Esperando en hora actual: ",HH,":",MM,":",SS);
        		!at(enfermera, owner);	
-			!comprobarHora([Med|_],H,M,S);
+			!comprobarHora([Med|MedL],H,M,S);
      	}else{
-			.println("Dando al owner la medicina a la hora: H:",H,":",M,":",S);
+			!darMedicina([Med|MedL],H,M,S);
 		}.
-		
+
++!darMedicina([],H,M,S) <-
+	.println("TODA LA MEDICINA TOMADA").
+
++!darMedicina([Med|MedL],H,M,S) <-
+	.time(HH,MM,SS);
+	.println("Dando al owner la medicina: ", Med, " a la hora: H:",HH,":",MM,":",SS);
+	!darMedicina(MedL,H,M,S).
 
 +!aPorMedicina(Ag,Medicina,_,_,_): not free[source(self)]<-
 		.println("Añadido ", Medicina, " a la lista").
