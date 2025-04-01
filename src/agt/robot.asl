@@ -124,7 +124,11 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 			!comprobarHora([Med|MedL],H,M,S);
      	}else{
 			!darMedicina([Med|MedL],H,M,S);
+			!enviarMedicinaPendiente;
 		}.
+
++!enviarMedicinaPendiente: medicPend(L) <-
+	.send(owner,achieve,medicinaRecibida(L)).
 
 +!darMedicina([],H,M,S) <-
 	.println("TODA LA MEDICINA TOMADA").

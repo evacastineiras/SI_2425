@@ -46,7 +46,6 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 !send_pauta.
 
-
 !open.
 
 !walk.
@@ -74,7 +73,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .time(H, M, S);
     .findall(consumo(X,T,H,M,S), pauta(X,T), L);
     !iniciarContadores(L);
-    !tomarMedicina.
+    !!tomarMedicina.
 +!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
     if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 		+consumo(Medicina,T,H,M+1,S+T-60);
@@ -92,28 +91,43 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println("MISMO MINUTO");
 	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);
+	!addMedicina(Medicina);
+	.abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 		+consumo(Medicina,T,H,M+1,S+T-60);	
 	}else{
 		+consumo(Medicina,T,H,M,S+T);
-	}.
+	}
+	!tomarMedicina.
 
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
     .println("DISTINTO MINUTO");
     //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);	
 	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
+	!addMedicina(Medicina);
+	.abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 		+consumo(Medicina,T,H,M+1,S+T-60);	
 	}else{
 		+consumo(Medicina,T,H,M,S+T);
-	}.
+	}
+	!tomarMedicina.
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
     .wait(10);
     !tomarMedicina.
 
++!medicinaRecibida(L) <- 
+	.println("Medicamentos actualizados");
+	-medicPend(_);
+	+medicPend(L).
+
++!addMedicina(Medicina): medicPend(Med) <-
+	.concat(Med,[Medicina],L);
+	-medicPend(_);
+	+medicPend(L).
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;
