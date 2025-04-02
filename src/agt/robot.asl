@@ -53,7 +53,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
 	.println("MISMO MINUTO");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	//!has(owner,X);
 	!addMedicina(Medicina);
 	!!aPorMedicina(Medicina,H,M,S);
@@ -72,7 +72,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);	
 	
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
     !addMedicina(Medicina);
     !!aPorMedicina(Medicina,H,M,S);
     .abolish(consumo(Medicina,T,H,M,S));
