@@ -107,6 +107,12 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!aPorMedicina(Medicina,_,_,_): not free[source(self)]<-
 		.println("Añadido ", Medicina, " a la lista").
 
++!addPauta(pauta(Medicacion,Tiempo)) <-
+	.println("Se me ha añadido la pauta: ",Medicacion," tiempo: ",Tiempo);
+	.time(H,M,S);
+	+pauta(Medicacion,Tiempo);
+	+consumo(Medicacion,Tiempo,H,M,S).
+
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
 	.drop_intention(aPorMedicina(_,_,_,_));

@@ -88,6 +88,15 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
+
++!addPauta(pauta(Medicacion,Tiempo)) <-
+	.println("Se me ha añadido la pauta: ",Medicacion," tiempo: ",Tiempo);
+	.time(H,M,S);
+	.send(enfermera,achieve,addPauta(pauta(Medicacion,Tiempo)));
+	+pauta(Medicacion,Tiempo);
+	+consumo(Medicacion,Tiempo,H,M,S).
+
+
 /* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
 	.println("MISMO MINUTO");
