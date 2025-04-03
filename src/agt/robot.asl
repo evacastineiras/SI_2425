@@ -66,26 +66,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.belief(consumo(Medicina,_,_,MMM,SSS));
 	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
     !tomarMedicina.
-/*
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
-    .println("DISTINTO MINUTO");
-    //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
-	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);	
-	
-	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
-    !addMedicina(Medicina);
-    !!aPorMedicina(Medicina,H,M,S);
-    .abolish(consumo(Medicina,T,H,M,S));
-    if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
-		+consumo(Medicina,T,H,M+1,S+T-60);	
-	}else{
-		+consumo(Medicina,T,H,M,S+T);
-	}
-	.belief(consumo(Medicina,_,_,MMM,SSS));
-	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
-    !tomarMedicina.
 
-/* NADA QUE TOMAR */
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
@@ -221,3 +202,23 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +?time(T) : true
   <-  time.check(T).
 
+/*
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
+    .println("DISTINTO MINUTO");
+    //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);	
+	
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
+    !addMedicina(Medicina);
+    !!aPorMedicina(Medicina,H,M,S);
+    .abolish(consumo(Medicina,T,H,M,S));
+    if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+		+consumo(Medicina,T,H,M+1,S+T-60);	
+	}else{
+		+consumo(Medicina,T,H,M,S+T);
+	}
+	.belief(consumo(Medicina,_,_,MMM,SSS));
+	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
+    !tomarMedicina.
+
+/* NADA QUE TOMAR */
