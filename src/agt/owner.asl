@@ -96,6 +96,13 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	+pauta(Medicacion,Tiempo);
 	+consumo(Medicacion,Tiempo,H,M,S).
 
++!deletePauta(pauta(Medicacion,_)) <-
+	.println("Se ha eliminado la pauta: ",Medicacion);
+	.time(H,M,S);
+	.send(enfermera,achieve,addPauta(pauta(Medicacion,_)));
+	-pauta(Medicacion,_);
+	-consumo(Medicacion,_,H,M,S).
+
 
 /* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior

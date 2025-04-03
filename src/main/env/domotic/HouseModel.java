@@ -234,9 +234,11 @@ public class HouseModel extends GridWorldModel {
 			System.out.println("Eliminado "+Integer.toString(unidad)+" unidad de " + medicina);
 			return true;
 		} else{
-			System.out.println("Error medicina no encontrada");
-			return false;
+			disponibilidadMedicamentos.put(medicina, 50);
+			System.out.println("Medicina repuesta");
+			return true;
 		} 
+		
 	}
 
 	boolean mostrarMedicinas(){

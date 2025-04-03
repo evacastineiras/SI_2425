@@ -113,6 +113,12 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	+pauta(Medicacion,Tiempo);
 	+consumo(Medicacion,Tiempo,H,M,S).
 
++!deletePauta(pauta(Medicacion,_)) <-
+	.println("Se ha eliminado la pauta: ",Medicacion);
+	.time(H,M,S);
+	-pauta(Medicacion,_);
+	-consumo(Medicacion,_,H,M,S).
+
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
 	.drop_intention(aPorMedicina(_,_,_,_));
