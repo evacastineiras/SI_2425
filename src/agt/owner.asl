@@ -108,7 +108,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
 	.println("MISMO MINUTO");
 	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);
 	!addMedicina(Medicina);
 	.abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
@@ -122,7 +122,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .println("DISTINTO MINUTO");
     //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
 	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);	
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
 	!addMedicina(Medicina);
 	.abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
