@@ -141,6 +141,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	!cogerTodaMedicina(L);
 	.abolish(medicPend(L));
 	+medicPend([]);
+	.print("Me estoy tomando la medicación");
 	close(fridge);
 	!enviarMedicinaPendiente;
 	-busy.
