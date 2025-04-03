@@ -50,8 +50,8 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 
 /* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
-	.println("MISMO MINUTO");
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- // Funciona por que S siempre es anterior
+	.println("ES HORA DE IR YENDO A POR LA MEDICACION");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	//!has(owner,X);
@@ -66,7 +66,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.belief(consumo(Medicina,_,_,MMM,SSS));
 	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
     !tomarMedicina.
-
+/*
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
     .println("DISTINTO MINUTO");
     //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
@@ -84,6 +84,8 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.belief(consumo(Medicina,_,_,MMM,SSS));
 	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
     !tomarMedicina.
+
+/* NADA QUE TOMAR */
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
