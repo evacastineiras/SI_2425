@@ -29,7 +29,7 @@ public class HouseModel extends GridWorldModel {
 	public static final int CHARGER =  256;
     public static final int TABLE  	=  512;
     public static final int BED	   	= 1024;
-	public static final int KIT		= 2048; //Es en potencias porque se esta trabajando con bitmap
+	public static final int KIT		= 2048; 
 
 	private Map<Integer, Set<Location>> localizacionesVisitadas = new HashMap<>();
 	//almacena las localizaciones que recorre un agente
@@ -42,7 +42,7 @@ public class HouseModel extends GridWorldModel {
 	int availableDrugs  = 2; // how many drugs are available
                           
     boolean fridgeOpen   = false; 	// whether the fridge is open                                   
-    int sipCount        = 0; 		// how many sip the owner did, nos indica tambien si el owner tiene la cerveza en la mano, si aún le quedan sorbos (<10) pues aún la tiene en la mano
+    int sipCount        = 0; 		// how many sip the owner did
 
 	public final String PARACETAMOL = "paracetamol";
 	public final String IBUPROFENO 	= "ibuprofeno";
@@ -52,8 +52,8 @@ public class HouseModel extends GridWorldModel {
 
 	public Map<String,Integer> disponibilidadMedicamentos = new HashMap<>();
 
-	boolean kitAbierto   		= false; 	// Si el kit esta abierto
-	boolean llevandoMedicina 	= false; 	// Si el robot está sujetando una medicina
+	boolean kitAbierto   		= false; 	
+	boolean llevandoMedicina 	= false; 	
 
 
 	
