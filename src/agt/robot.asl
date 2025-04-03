@@ -106,10 +106,10 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.drop_intention(aPorMedicina(_,_,_,_));
 	+free.
 
-+!comprobarHora([Med|MedL],H,M,S) <- // Car es consumo(X,T,H,M,S) 
++!comprobarHora([Med|MedL],H,M,S) <- 
 		!at(enfermera, owner);	
 		.time(HH,MM,SS);
-		if(SS<S) { // where vl(X) is a belief    4 58    
+		if(SS<S) {    
 			.print("Esperando a la hora perfecta... Hora perfecta: ",H,":",M,":",S);
 			.print("Esperando en hora actual: ",HH,":",MM,":",SS);
        		!at(enfermera, owner);	
