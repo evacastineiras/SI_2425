@@ -172,7 +172,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	+medicPend(L).
 
 +!aMiBola : true
-   <- .random(X); .wait(X*5000+2000);
+   <- .random(X); .wait(X*10000+2000);
    	  .print("VOY YO A POR LA MEDICINA");
 	  .drop_all_intentions;
 	  !aPorMedicina;
