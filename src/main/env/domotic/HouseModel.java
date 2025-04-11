@@ -38,6 +38,9 @@ public class HouseModel extends GridWorldModel {
     public static final int GSize = 12;     //Cells
 	public final int GridSize = 1080;    	//Width
 
+	public int bateria_robot = GSize*2*GSize;
+	public int bateria_auxiliar = GSize*2*GSize;
+
 	boolean carryingDrug = false; // whether the robot is carrying drug
 	int availableDrugs  = 2; // how many drugs are available
                           
@@ -169,7 +172,7 @@ public class HouseModel extends GridWorldModel {
 		 
      }
 	
-
+	 
 	 String getRoom (Location thing){  
 		
 		String byDefault = "kitchen";
@@ -344,6 +347,46 @@ public class HouseModel extends GridWorldModel {
         return true;        
     }   
 	
+	boolean gastarEnergia(int Ag) {
+		if (Ag == NURSE) {
+			if(bateria_robot == 0) {
+				System.out.println("El robot ENFERMERA se ha quedado sin bateria, por favor recargue la bateria del robot.");
+				return false;
+			} else {
+				bateria_robot -= 1;
+				return true;
+			}
+		} else {
+			if(bateria_auxiliar == 0) {
+				System.out.println("El robot AUXILIAR se ha quedado sin bateria, por favor recargue la bateria del robot.");
+				return false;	
+			} else {
+				bateria_auxiliar -= 1;
+				return true;
+			}
+		}
+	}
+
+	boolean recargarEnergia(int Ag) {
+		if (Ag == NURSE) {
+			if(bateria_robot < GridSize*2*GSize) {
+				bateria_robot += 1;
+				return true;
+			} else {
+				System.out.println("El robot ENFERMERA ya tiene la bateria cargada al maximo.");
+				return false
+			}
+		} else {
+			if(bateria_auxiliar < GridSize*2*GSize) {
+				bateria_auxiliar += 1;
+				return true
+			} else {
+				System.out.println("El robot AUXILIAR ya tiene la bateria cargada al maximo.");
+				return false;
+			}
+		}
+	}
+
 	boolean handInMedicina() {
         if (carryingDrug) {
             sipCount = 10;
