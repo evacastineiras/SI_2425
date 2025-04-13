@@ -26,6 +26,7 @@ free.
  
 
 medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
+medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot actualmente
 
 /* Plans */
 
@@ -54,7 +55,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.println("ES HORA DE IR YENDO A POR LA MEDICACION");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
-	!addMedicina(Medicina);
+	!addMedicinaPendiente(Medicina);
 	!!aPorMedicina(Medicina,H,M,S);
     .abolish(consumo(Medicina,T,H,M,S));
 	if(S+T>=60){ 
@@ -101,10 +102,13 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	-pauta(Medicacion,_);
 	-consumo(Medicacion,_,H,M,S).
 
-+!cancelarMedicacion <-
++!cancelarMedicacion: medicActual([]) <-
 	.print("Me prohiben ir a por la medicacion");
 	.drop_intention(aPorMedicina(_,_,_,_));
 	+free.
+
++!cancelarMedicacion: not medicActual([]) <-
+	.print("Me prohiben ir a por la medicacion pero tengo medicina que entregar al owner").
 
 +!comprobarHora([Med|MedL],H,M,S) <- 
 		!at(enfermera, owner);	
@@ -112,7 +116,6 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 		if(SS<S) {    
 			.print("Esperando a la hora perfecta... Hora perfecta: ",H,":",M,":",S);
 			.print("Esperando en hora actual: ",HH,":",MM,":",SS);
-       		!at(enfermera, owner);	
 			!comprobarHora([Med|MedL],H,M,S);
      	}else{
 			!darMedicina([Med|MedL],H,M,S);
@@ -123,21 +126,33 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	.send(owner,achieve,medicinaRecibida(L)).
 
 +!darMedicina([],H,M,S) <-
-	.println("TODA LA MEDICINA TOMADA").
+	.println("TODA LA MEDICINA TOMADA");
+	-medicActual(_);
+	+medicActual([]).
 
 +!darMedicina([Med|MedL],H,M,S) <-
 	.time(HH,MM,SS);
 	.println("Dando al owner la medicina: ", Med, " a la hora: H:",HH,":",MM,":",SS);
 	!darMedicina(MedL,H,M,S).
 
-+!addMedicina(Medicina): medicPend(Med) <-
+
++!addMedicinaPendiente(Medicina): medicPend(Med) <-
 	.concat(Med,[Medicina],L);
 	-medicPend(_);
 	+medicPend(L).
 
++!addMedicinaActual(Medicina): not medicActual([]) <-
+	+medicActual(Medicina).
+
++!addMedicinaActual(Medicina): medicActual(Med) <-
+	.concat(Med,[Medicina],L);
+	-medicActual(_);
+	+medicActual(L).
+
 +!cogerTodaMedicina([Car|Cdr]) <-
 		.println("Cojo la medicina ",Car);
 		getMedicina(Car);
+		!addMedicinaActual(Car);
 		!cogerTodaMedicina(Cdr).
 
 +!cogerTodaMedicina([]) <-

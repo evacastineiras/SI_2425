@@ -323,6 +323,20 @@ public class HouseModel extends GridWorldModel {
 		Location posicionAgente = getAgPos(Ag);
 		Location posicionInical = getAgPos(Ag);
 		
+		if (Ag == OWNER && posicionAgente.distance(dest)>0) { // agent is being blocked by other agent
+			Location robotLocation = getAgPos(NURSE);
+			if (posicionAgente.x < dest.x && robotLocation.x == posicionAgente.x+1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.x > dest.x && robotLocation.x == posicionAgente.x-1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.y < dest.y && robotLocation.y == posicionAgente.y+1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.y > dest.y && robotLocation.y == posicionAgente.y-1) {
+				forceMoveAway(NURSE);
+			}
+			
+		}
+
 		if (posicionAgente.distance(dest)>0) {
 			if (posicionAgente.x < dest.x && canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x+1, posicionAgente.y))) {
 				posicionAgente.x++;
@@ -332,21 +346,6 @@ public class HouseModel extends GridWorldModel {
 				posicionAgente.y++;
 			} else if (posicionAgente.y > dest.y &&  canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y-1))) {  
 				posicionAgente.y--;
-			}
-			
-		}
-
-		if (posicionAgente.equals(posicionInical) && Ag == OWNER && posicionAgente.distance(dest)>0) { // agent is being blocked by other agent
-			Location robotLocation = getAgPos(NURSE);
-			System.out.println("ENTRANDO");
-			if (posicionAgente.x < dest.x && robotLocation.x == posicionAgente.x+1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.x > dest.x && robotLocation.x == posicionAgente.x-1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.y < dest.y && robotLocation.y == posicionAgente.y+1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.y > dest.y && robotLocation.y == posicionAgente.y-1) {
-				forceMoveAway(NURSE);
 			}
 			
 		}
