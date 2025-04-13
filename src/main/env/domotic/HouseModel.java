@@ -302,50 +302,78 @@ public class HouseModel extends GridWorldModel {
     }
 
 
+	public void forceMoveAway(int Ag) {
+		Location posicionAgente = getAgPos(Ag);
+
+		
+		if (canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y)) {
+			posicionAgente.x++;
+		} else if (canMoveTo(Ag,posicionAgente.x-1,posicionAgente.y)) {
+			posicionAgente.x--;
+		} else if (canMoveTo(Ag,posicionAgente.x,posicionAgente.y+1)) {
+			posicionAgente.y++;
+		} else if (canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1)) {  
+			posicionAgente.y--;
+		}
+		setAgPos(Ag, posicionAgente);
+	}
+
+
 	boolean moveTowards(int Ag, Location dest) {
 		Location posicionAgente = getAgPos(Ag);
 		Location posicionInical = getAgPos(Ag);
-				
 		
 		if (posicionAgente.distance(dest)>0) {
 			if (posicionAgente.x < dest.x && canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x+1, posicionAgente.y))) {
 				posicionAgente.x++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.x > dest.x && canMoveTo(Ag,posicionAgente.x-1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x-1, posicionAgente.y))) {
 				posicionAgente.x--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y < dest.y && canMoveTo(Ag,posicionAgente.x,posicionAgente.y+1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y+1))) {
 				posicionAgente.y++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y > dest.y &&  canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y-1))) {  
 				posicionAgente.y--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
 			}
 			
 		}
-		if (posicionAgente.equals(posicionInical) && posicionAgente.distance(dest)>0) { // could not move the agent
+
+		if (posicionAgente.equals(posicionInical) && Ag == OWNER && posicionAgente.distance(dest)>0) { // agent is being blocked by other agent
+			Location robotLocation = getAgPos(NURSE);
+			System.out.println("ENTRANDO");
+			if (posicionAgente.x < dest.x && robotLocation.x == posicionAgente.x+1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.x > dest.x && robotLocation.x == posicionAgente.x-1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.y < dest.y && robotLocation.y == posicionAgente.y+1) {
+				forceMoveAway(NURSE);
+			} else if (posicionAgente.y > dest.y && robotLocation.y == posicionAgente.y-1) {
+				forceMoveAway(NURSE);
+			}
+			
+		}
+		
+		if (posicionAgente.equals(posicionInical) && Ag == NURSE && posicionAgente.distance(dest)>0) { // agent tries to move in some direction
 			if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x + 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x + 1, posicionAgente.y))) {
 				posicionAgente.x++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
+
 			} else if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x - 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x - 1, posicionAgente.y))) {
 				posicionAgente.x--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
+
 			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y + 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y + 1))) {
 				posicionAgente.y++;
-				añadirLocalizacionVisitada(Ag, posicionAgente);
+
 			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y - 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y - 1))) {
 				posicionAgente.y--;
-				añadirLocalizacionVisitada(Ag, posicionAgente);	
+
 			}
 		}
+		
+		
+		
 	
-		if (esAdyacente(posicionAgente, dest)){
-			localizacionesVisitadas.clear();
-		}
 		setAgPos(Ag, posicionAgente); // move the agent in the grid 
 		
         return true;        
-    }   
+    }
 	
 	boolean gastarEnergia(int Ag) {
 		if (Ag == NURSE) {
@@ -374,12 +402,12 @@ public class HouseModel extends GridWorldModel {
 				return true;
 			} else {
 				System.out.println("El robot ENFERMERA ya tiene la bateria cargada al maximo.");
-				return false
+				return false;
 			}
 		} else {
 			if(bateria_auxiliar < GridSize*2*GSize) {
 				bateria_auxiliar += 1;
-				return true
+				return true;
 			} else {
 				System.out.println("El robot AUXILIAR ya tiene la bateria cargada al maximo.");
 				return false;
