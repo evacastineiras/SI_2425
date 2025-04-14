@@ -75,7 +75,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     .time(H, M, S);
     .findall(consumo(X,T,H,M,S), pauta(X,T), L);
     !iniciarContadores(L);
-    !!tomarMedicina.
+    !tomarMedicina.
 +!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
     if(S+T>=60){ 
 		+consumo(Medicina,T,H,M+1,S+T-60);
@@ -104,9 +104,9 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	-consumo(Medicacion,_,H,M,S).
 
 
-/* MISMA HORA Y MINUTO */						  
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- 
-	.println("ES HORA DE IR YENDO A POR LA MEDICACION");
+/* MISMA HORA Y MINUTO*/						
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- // Funciona por que S siempre es anterior
+	.println("Hora de ir yendo a por la medicación...");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	!addMedicina(Medicina);
@@ -118,6 +118,12 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	}
 	.belief(consumo(Medicina,_,_,MMM,SSS));
 	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
+    !tomarMedicina.
+
+
+/* NADA QUE TOMAR */
++!tomarMedicina <- 
+    .wait(10);
     !tomarMedicina.
 
 +!aPorMedicina  <-
@@ -135,7 +141,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	-busy.
 
 +!aPorMedicina: busy <-
-		.println("Añadido ", Medicina, " a la lista").
+	.println("Añadido ", Medicina, " a la lista").
 
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
@@ -175,6 +181,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
    <- .random(X); .wait(X*10000+2000);
    	  .print("VOY YO A POR LA MEDICINA");
 	  .drop_all_intentions;
+	  !!tomarMedicina;
 	  !aPorMedicina;
 	  !sit;
 	  !aMiBola.

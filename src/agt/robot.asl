@@ -52,7 +52,7 @@ medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot ac
 
 /* MISMA HORA Y MINUTO*/						
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- // Funciona por que S siempre es anterior
-	.println("ES HORA DE IR YENDO A POR LA MEDICACION");
+	.println("Hora de ir yendo a por la medicación...");
 	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
 	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	!addMedicinaPendiente(Medicina);
@@ -84,6 +84,7 @@ medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot ac
 		.abolish(medicPend(L));
 		+medicPend([]);
 		close(fridge);
+		!enviarMedicinaPendiente;
 		!comprobarHora(L,H,M,S);
 		+free[source(self)].
 
@@ -119,7 +120,7 @@ medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot ac
 			!comprobarHora([Med|MedL],H,M,S);
      	}else{
 			!darMedicina([Med|MedL],H,M,S);
-			!enviarMedicinaPendiente;
+			
 		}.
 
 +!enviarMedicinaPendiente: medicPend(L) <-
@@ -167,7 +168,6 @@ medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot ac
 	.println(Ag, " is at ",P);
 	.wait(500).
 +!at(Ag, P) : not at(Ag, P) <-   
-	.wait(200);
 	!go(P);                                        
 	!at(Ag, P).            
 	                                                   

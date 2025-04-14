@@ -304,7 +304,6 @@ public class HouseModel extends GridWorldModel {
 
 	public void forceMoveAway(int Ag) {
 		Location posicionAgente = getAgPos(Ag);
-
 		
 		if (canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y)) {
 			posicionAgente.x++;
@@ -323,7 +322,7 @@ public class HouseModel extends GridWorldModel {
 		Location posicionAgente = getAgPos(Ag);
 		Location posicionInical = getAgPos(Ag);
 		
-		if (Ag == OWNER && posicionAgente.distance(dest)>0) { // agent is being blocked by other agent
+		if (Ag == OWNER && posicionAgente.distance(dest)>0 && posicionAgente.distance(getAgPos(NURSE))==1) { // agent is being blocked by other agent
 			Location robotLocation = getAgPos(NURSE);
 			if (posicionAgente.x < dest.x && robotLocation.x == posicionAgente.x+1) {
 				forceMoveAway(NURSE);
