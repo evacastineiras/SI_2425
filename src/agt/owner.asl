@@ -26,6 +26,7 @@ pauta(frenadol, 40).
 pauta(aspirina, 50).
 
 medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
+medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el owner en el momento
 /* Initial goals */
 
 //Owner will send his prescription to the robot
@@ -133,9 +134,9 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	open(fridge); 
 	.belief(medicPend(L));
 	!cogerTodaMedicina(L);
+	!consumirMedicina;
 	.abolish(medicPend(L));
 	+medicPend([]);
-	.print("Me estoy tomando la medicación");
 	close(fridge);
 	!enviarMedicinaPendiente;
 	-busy.
@@ -145,18 +146,31 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
-	.drop_intention(aPorMedicina).
+	.drop_intention(aPorMedicina);
+	!sit;
+	!aMiBola.
 
 +!enviarMedicinaPendiente: medicPend(L) <-
 	.send(enfermera,achieve,medicinaRecibida(L)).
 
 
 
++!consumirMedicina: medicActualOwner([Car|Cdr]) <-
+	.println("Tomando ", Car);
+	-medicActualOwner(_);
+	+medicActualOwner(Cdr);
+	!consumirMedicina.
+
++!consumirMedicina: medicActualOwner([]) <-
+	.println("Me he tomado toda la medicina").	
 
 
 +!cogerTodaMedicina([Car|Cdr]) <-
 		.println("Cojo la medicina ",Car);
 		getMedicina(Car);
+		.belief(medicActualOwner(L));
+		-medicActualOwner(_);
+		+medicActualOwner([Car|L]);
 		!cogerTodaMedicina(Cdr).
 
 +!cogerTodaMedicina([]) <-

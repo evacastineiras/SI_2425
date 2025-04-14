@@ -31,7 +31,7 @@ public class HouseModel extends GridWorldModel {
     public static final int BED	   	= 1024;
 	public static final int KIT		= 2048; 
 
-	private Map<Integer, Set<Location>> localizacionesVisitadas = new HashMap<>();
+	private Map<Integer, Set<Location>> localizacionesVisitadas;
 	//almacena las localizaciones que recorre un agente
 
     // the grid size                                                     
@@ -57,6 +57,7 @@ public class HouseModel extends GridWorldModel {
 
 	boolean kitAbierto   		= false; 	
 	boolean llevandoMedicina 	= false; 	
+
 
 
 	
@@ -162,6 +163,8 @@ public class HouseModel extends GridWorldModel {
 		addWall(GSize*2-4, GSize/2+2, GSize*2-4, GSize-1);  
 		addWall(GSize+2, GSize/2, GSize*2-1, GSize/2);   
 
+		
+		localizacionesVisitadas = new HashMap<>();
 
 		disponibilidadMedicamentos.put(PARACETAMOL,	50);
 		disponibilidadMedicamentos.put(IBUPROFENO,	50);
@@ -339,12 +342,16 @@ public class HouseModel extends GridWorldModel {
 		if (posicionAgente.distance(dest)>0) {
 			if (posicionAgente.x < dest.x && canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x+1, posicionAgente.y))) {
 				posicionAgente.x++;
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.x > dest.x && canMoveTo(Ag,posicionAgente.x-1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x-1, posicionAgente.y))) {
 				posicionAgente.x--;
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y < dest.y && canMoveTo(Ag,posicionAgente.x,posicionAgente.y+1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y+1))) {
 				posicionAgente.y++;
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y > dest.y &&  canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y-1))) {  
 				posicionAgente.y--;
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			}
 			
 		}
@@ -352,19 +359,22 @@ public class HouseModel extends GridWorldModel {
 		if (posicionAgente.equals(posicionInical) && Ag == NURSE && posicionAgente.distance(dest)>0) { // agent tries to move in some direction
 			if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x + 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x + 1, posicionAgente.y))) {
 				posicionAgente.x++;
-
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.x == dest.x && canMoveTo(Ag, posicionAgente.x - 1, posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x - 1, posicionAgente.y))) {
 				posicionAgente.x--;
-
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y + 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y + 1))) {
 				posicionAgente.y++;
-
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y == dest.y && canMoveTo(Ag, posicionAgente.x, posicionAgente.y - 1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y - 1))) {
 				posicionAgente.y--;
-
+				añadirLocalizacionVisitada(Ag, posicionAgente);
 			}
 		}
 		
+		if (esAdyacente(posicionAgente, dest)){
+			localizacionesVisitadas.clear();
+		}
 		
 		
 	
