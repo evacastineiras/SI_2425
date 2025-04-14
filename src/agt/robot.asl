@@ -132,7 +132,6 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 	-free;
 	.println("El owner ha cogido la medicina, comprobando si se la ha tomado...");
 	!at(enfermera,owner);
-	.println("LLEGADO");
 	.send(owner,askOne,medicActualOwner(L),A,100);
 	+A;
 	+free.

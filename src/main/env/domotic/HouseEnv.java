@@ -4,6 +4,10 @@ import jason.asSyntax.*;
 import jason.environment.Environment;
 import jason.environment.grid.Location;
 import java.util.logging.Logger;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.Iterator;
+import java.util.Map;
 
 public class HouseEnv extends Environment { //Al extender Environment, los metodos init y execute, hay que implementarlos, stop casi también
 
@@ -135,11 +139,11 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 		Location lOwner = model.getAgPos(model.OWNER);
 		
 
-        if (lRobot.distance(model.lFridge)<2) {
+        if (lRobot.distance(model.lFridge)==1) {
             addPercept("enfermera", af);
         } 
 		
-        if (lOwner.distance(model.lFridge)<2) {
+        if (lOwner.distance(model.lFridge)==1) {
             addPercept("owner", oaf);
         } 
 		
@@ -176,9 +180,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 			System.out.println("[owner] is at Sofa.");
         }
 
-
-
-
+		
     }
 
 
