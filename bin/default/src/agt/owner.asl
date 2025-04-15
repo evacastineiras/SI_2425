@@ -19,13 +19,14 @@ connect(hallway,livingroom, doorSal2).
 connect(livingroom, hallway, doorSal2).
 
 /*Initial prescription beliefs*/
-pauta(paracetamol, 25). //paracetamol
-pauta(ibuprofeno, 30). //ibuprofeno
-pauta(dalsi, 25). // dalsy
-pauta(frenadol, 40). //frenadol
-pauta(aspirina, 50).
+pauta(paracetamol, 25, 100). 
+pauta(ibuprofeno, 30, 100). 
+pauta(dalsi, 25, 50). 
+pauta(frenadol, 40, 100). 
+pauta(aspirina, 50, 100).
 
 medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
+medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el owner en el momento
 /* Initial goals */
 
 //Owner will send his prescription to the robot
@@ -63,7 +64,7 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 //+!init <- !sit ||| !open ||| !walk ||| !wakeup ||| !check_bored.
 
 +!send_pauta : true  <-
-	.findall(pauta(X,Y), pauta(X,Y), L);
+	.findall(pauta(X,Y,Z), pauta(X,Y,Z), L);
 	.print("Mi pauta: ", L);
 	.send(enfermera, tell, L);
 	.send(enfermera,achieve,inicia);
@@ -73,11 +74,11 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 +!inicia : true <- 
     .print("Iniciando recordatorios de medicamentos...");
     .time(H, M, S);
-    .findall(consumo(X,T,H,M,S), pauta(X,T), L);
+    .findall(consumo(X,T,H,M,S), pauta(X,T,C), L);
     !iniciarContadores(L);
-    !!tomarMedicina.
+    !tomarMedicina.
 +!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
-    if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+    if(S+T>=60){ 
 		+consumo(Medicina,T,H,M+1,S+T-60);
 		.print(consumo(Medicina,T,H,M+1,S+T-60));	
 	}else{
@@ -88,41 +89,52 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
-/* MISMA HORA Y MINUTO 19 39 29     38   8<=2-29*/						  // ahora son 58 y 50 es la ultima vez que tomaste 58-50==8==pauta--> 15-10 <= 56-50 --> entra
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,M,SS) & 15 >= S-SS  & medicPend(Med) <- // Funciona por que S siempre es anterior
-	.println("MISMO MINUTO");
-	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",M,":",SS);
-	!addMedicina(Medicina);
-	.abolish(consumo(Medicina,T,H,M,S));
-	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
-		+consumo(Medicina,T,H,M+1,S+T-60);	
-	}else{
-		+consumo(Medicina,T,H,M,S+T);
-	}
-	!tomarMedicina.
 
-+!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & M == MM+1 & S<15 & 15 >= (60-SS)+(S) & medicPend(Med) <-
-    .println("DISTINTO MINUTO");
-    //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
-	.println("Me tengo que tomar ",Medicina, " a las: ",H,":",M,":",S);	
-	.println("Voy a ir llendo a por ", Medicina, " a las: ",H,":",MM,":",SS);
++!addPauta(pauta(Medicacion,Tiempo, Caducidad)) <-
+	.println("Se me ha añadido la pauta: ",Medicacion," tiempo: ",Tiempo);
+	.time(H,M,S);
+	.send(enfermera,achieve,addPauta(pauta(Medicacion,Tiempo)));
+	+pauta(Medicacion,Tiempo);
+	+consumo(Medicacion,Tiempo,H,M,S).
+
++!deletePauta(pauta(Medicacion,_)) <-
+	.println("Se ha eliminado la pauta: ",Medicacion);
+	.time(H,M,S);
+	.send(enfermera,achieve,addPauta(pauta(Medicacion,_)));
+	-pauta(Medicacion,_);
+	-consumo(Medicacion,_,H,M,S).
+
+
+/* MISMA HORA Y MINUTO*/						
++!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- // Funciona por que S siempre es anterior
+	.println("Hora de ir yendo a por la medicación...");
+	.println("Owner debe tomar ",Medicina, " a las: ",H,":",M,":",S);
+	.println("Voy a ir yendo a por ", Medicina, " a las: ",H,":",M,":",SS);	
 	!addMedicina(Medicina);
-	.abolish(consumo(Medicina,T,H,M,S));
-	if(S+T>=60){ //  Si la siguiente pauta me va a hacer cambiar de minuto, le resto 60. Ej. Me lo voy tomar a 50, si siguiente pauta es 15== 65.
+    .abolish(consumo(Medicina,T,H,M,S));
+	if(S+T>=60){ 
 		+consumo(Medicina,T,H,M+1,S+T-60);	
 	}else{
 		+consumo(Medicina,T,H,M,S+T);
 	}
-	!tomarMedicina.
+	.belief(consumo(Medicina,_,_,MMM,SSS));
+	.println("Actualizado consumo a min: ",MMM," seg: ",SSS);
+    !tomarMedicina.
+
+
+/* NADA QUE TOMAR */
++!tomarMedicina <- 
+    .wait(10);
+    !tomarMedicina.
 
 +!aPorMedicina  <-
 	+busy;
 	!at(owner, fridge);
 	.send(enfermera,achieve,cancelarMedicacion);
-	open(fridge); // Change it by an internal operation similar to fridge.open
+	open(fridge); 
 	.belief(medicPend(L));
 	!cogerTodaMedicina(L);
+	!consumirMedicina;
 	.abolish(medicPend(L));
 	+medicPend([]);
 	close(fridge);
@@ -130,22 +142,35 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	-busy.
 
 +!aPorMedicina: busy <-
-		.println("Añadido ", Medicina, " a la lista").
+	.println("Añadido ", Medicina, " a la lista").
 
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
-	.drop_intention(aPorMedicina).
+	.drop_intention(aPorMedicina);
+	!sit;
+	!aMiBola.
 
 +!enviarMedicinaPendiente: medicPend(L) <-
 	.send(enfermera,achieve,medicinaRecibida(L)).
 
 
 
++!consumirMedicina: medicActualOwner([Car|Cdr]) <-
+	.println("Tomando ", Car);
+	-medicActualOwner(_);
+	+medicActualOwner(Cdr);
+	!consumirMedicina.
+
++!consumirMedicina: medicActualOwner([]) <-
+	.println("Me he tomado toda la medicina").	
 
 
 +!cogerTodaMedicina([Car|Cdr]) <-
 		.println("Cojo la medicina ",Car);
 		getMedicina(Car);
+		.belief(medicActualOwner(L));
+		-medicActualOwner(_);
+		+medicActualOwner([Car|L]);
 		!cogerTodaMedicina(Cdr).
 
 +!cogerTodaMedicina([]) <-
@@ -167,9 +192,10 @@ medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar own
 	+medicPend(L).
 
 +!aMiBola : true
-   <- .random(X); .wait(X*5000+2000);
+   <- .random(X); .wait(X*10000+2000);
    	  .print("VOY YO A POR LA MEDICINA");
 	  .drop_all_intentions;
+	  !!tomarMedicina;
 	  !aPorMedicina;
 	  !sit;
 	  !aMiBola.

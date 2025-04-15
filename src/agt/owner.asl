@@ -25,6 +25,13 @@ pauta(dalsi, 25).
 pauta(frenadol, 40). 
 pauta(aspirina, 50).
 
+//Caducidades
+caducidad(paracetamol, 100).
+caducidad(ibuprofeno, 100).
+caducidad(dalsi, 50).
+caducidad(frenadol, 100).
+caducidad(aspirina, 100).
+
 medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
 medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el owner en el momento
 /* Initial goals */
@@ -66,6 +73,8 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 +!send_pauta : true  <-
 	.findall(pauta(X,Y), pauta(X,Y), L);
 	.print("Mi pauta: ", L);
+	.findall(caducidad(X,Y), caducidad(X,Y), U);
+	.send(enfermera, tell, U);
 	.send(enfermera, tell, L);
 	.send(enfermera,achieve,inicia);
 	!inicia.
@@ -75,8 +84,18 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
     .print("Iniciando recordatorios de medicamentos...");
     .time(H, M, S);
     .findall(consumo(X,T,H,M,S), pauta(X,T), L);
+	.findall(caducidad(X,Y), caducidad(X,Y), U);
+	!iniciarCaducidad(U);
     !iniciarContadores(L);
     !tomarMedicina.
+
++!iniciarCaducidad([caducidad(X,Y)|Cdr]) <-
+	!!contadorCaducidad(caducidad(X,Y));
+	!iniciarCaducidad(Cdr).
+
++!iniciarCaducidad([]) <-
+	.print("Iniciacion de la caducidad completada").
+
 +!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
     if(S+T>=60){ 
 		+consumo(Medicina,T,H,M+1,S+T-60);
@@ -89,6 +108,16 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
++!contadorCaducidad(caducidad(M,T)) <-
+	if(T<15){
+	//ir a por la nueva medicina y tirar la vieja
+	}else {
+	-caducidad(M,T);
+	+caducidad(M, T-1);
+	}
+	.wait(1000);
+	.print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", M, "tiempo: ", T);
+	!contadorCaducidad(caducidad(M,T-1)).
 
 +!addPauta(pauta(Medicacion,Tiempo)) <-
 	.println("Se me ha añadido la pauta: ",Medicacion," tiempo: ",Tiempo);
