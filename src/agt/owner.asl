@@ -156,7 +156,7 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
     .wait(10);
     !tomarMedicina.
 
-+!aPorMedicina  <-
++!aPorMedicina: not busy  <-
 	+busy;
 	!at(owner, fridge);
 	.send(enfermera,achieve,cancelarMedicacion);
@@ -170,8 +170,6 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 	!enviarMedicinaPendiente;
 	-busy.
 
-+!aPorMedicina: busy <-
-	.println("Añadido ", Medicina, " a la lista").
 
 +!cancelarMedicacion <-
 	.print("Me prohiben ir a por la medicacion");
@@ -202,8 +200,9 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 		+medicActualOwner([Car|L]);
 		!cogerTodaMedicina(Cdr).
 
-+!cogerTodaMedicina([]) <-
-		.println("He cogido toda la medicina").
++!cogerTodaMedicina([]): medicActualOwner(L) <-
+		.println("He cogido toda la medicina");
+		.send(enfermera,tell,medicActualOwner(L)).
 
 /* NADA QUE TOMAR */
 +!tomarMedicina <- 
@@ -220,14 +219,26 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 	-medicPend(_);
 	+medicPend(L).
 
-+!aMiBola : true
-   <- .random(X); .wait(X*10000+2000);
++!aMiBola
+   <- .random(X); .wait(X*30000+2000);
    	  .print("VOY YO A POR LA MEDICINA");
-	  .drop_all_intentions;
+	  .drop_all_desires;
+	  -busy;
 	  !!tomarMedicina;
 	  !aPorMedicina;
-	  !sit;
 	  !aMiBola.
+
++!esperarHoraPerfecta(T) <-
+	.println(T);
+	if (T<=5){
+		.println("Queda poco para hora, voy a esperar...");
+		.drop_all_desires;
+		-busy;
+		.wait(T*1000);
+		!aMiBola;
+	}else{
+		.println("Es muy pronto para esperar!");
+	}.
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;

@@ -26,7 +26,7 @@ free.
  
 
 medicPend([]). // Donde vamos a manejar los medicamentos que tiene que tomar owner
-medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el robot actualmente
+medicActual([]). // Donde vamos a manejar los medicamentos que lleva el robot actualmente
 
 
 /* Plans */
@@ -37,6 +37,7 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
     .time(H, M, S);
     .findall(consumo(X,T,H,M,S), pauta(X,T), L);
     !iniciarContadores(L);
+	!iniciarStock;
     !tomarMedicina.
 +!iniciarContadores([consumo(Medicina,T,H,M,S)|Cdr]) <-
     if(S+T>=60){ 
@@ -50,6 +51,14 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
     !iniciarContadores(Cdr).
 +!iniciarContadores([]) <- .print("Inicialización completada").
 
++!iniciarStock <- 
+	getStock;
+	.findall([Med,Q],stock(Med,Q),L);
+	+stockActual(L).
+
++!actualizarStock <-
+	-stockActual(L);
+	!iniciarStock.
 
 /* MISMA HORA Y MINUTO*/						
 +!tomarMedicina: pauta(Medicina,T) & consumo(Medicina,T,H,M,S) & .time(H,MM,SS) & ((MM == M & 15 >= S-SS ) | (M == MM+1 & S<15 & 15 >= (60-SS)+(S)))  & medicPend(Med) <- // Funciona por que S siempre es anterior
@@ -91,11 +100,7 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 
 
 +!aPorMedicina(Medicina,H,M,S): not free[source(self)] & .desire(comprobarTomaOwner) & not .desire(aPorMedicina)<-
-		.println("No he terminado de comprobar si owner ha tomado medicina, suspendiendo accion");
-		.drop_intention(comprobarTomaOwner);
-		+free;
-		!aPorMedicina(Medicina,H,M,S);
-		!comprobarTomaOwner.
+		.println("Comprobando que owner se ha tomado la medicacion, posteriormente llevare la medicina " ,Medicina).
 
 +!aPorMedicina(Medicina,_,_,_): not free[source(self)]  <-
 		.println("Añadido ", Medicina, " a la lista").
@@ -112,37 +117,70 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 	-pauta(Medicacion,_);
 	-consumo(Medicacion,_,H,M,S).
 
-+!cancelarMedicacion: medicActualNurse([]) <-
++!cancelarMedicacion: medicActual([]) <-
 	.print("Me prohiben ir a por la medicacion");
 	.drop_intention(aPorMedicina(_,_,_,_));
 	+free;
 	!comprobarTomaOwner.
 
-+!cancelarMedicacion: not medicActualNurse([]) <-
++!cancelarMedicacion: not medicActual([]) <-
 	.print("Me prohiben ir a por la medicacion pero tengo medicina que entregar al owner");
 	!comprobarTomaOwner;
 	+free.
 
 +!comprobarTomaOwner: not free <- 
-	.println("El owner ha cogido la medicina, comprobando si se la ha tomado... ESPERANDO A ESTAR LIBRE");
+	.println("Esperando a estar libre para comprobar que el owner se ha tomado la medicacion...");
 	.wait(1000);
 	!comprobarTomaOwner.
+
++!comprobarStock: not medicActualOwner(L) <- 
+	.print("Esperando a que owner me diga que medicacion ha tomado...");
+	.wait(500);
+	!comprobarStock.
 
 +!comprobarTomaOwner: free <- 
 	-free;
 	.println("El owner ha cogido la medicina, comprobando si se la ha tomado...");
-	!at(enfermera,owner);
-	.println("LLEGADO");
-	.send(owner,askOne,medicActualOwner(L),A,100);
-	+A;
+	!at(enfermera,fridge);
+	!comprobarStock;
 	+free.
 
-+medicActualOwner([]) <-
-	.println("Detectado que owner ha tomado medicina");
-	-medicActualOwner(_).
-+medicActualOwner(L) <-
-	.println("Owner no se ha tomado medicina!! ",L);
-	-medicActualOwner(_).
+
+
++!comprobarStock: medicActualOwner(L) <-
+	.println(L);
+	getStock;
+	.findall([Med,Q],stock(Med,Q),StockNuevo);
+	!comprobarMedicinas(L,StockNuevo);
+	-medicActualOwner(_);
+	!actualizarStock.
+
++!comprobarMedicinas([Med|Cdr],StockNuevo) <-
+	!comprobarMedicina(Med,StockNuevo);
+	!comprobarMedicinas(Cdr,StockNuevo).
+
++!comprobarMedicinas([],StockNuevo) <- .print("Todas medicinas comprobadas").
+
++!comprobarMedicina(MedicinaTomada,[[MedicinaTomada,Q1]|Cdr1]) <-
+	.belief(stockActual(L));
+	!comprobarStockMedicina(MedicinaTomada,Q1,L).
+	
+
++!comprobarMedicina(MedicinaTomada,[[_,_]|Cdr1]) <-
+	!comprobarMedicina(MedicinaTomada,Cdr1).
+
+
++!comprobarStockMedicina(MedicinaTomada,Q1,[[MedicinaTomada,Q2]|Cdr]) <- 
+	if (Q1 < Q2){
+		.print("Owner se ha tomado medicina ",MedicinaTomada);
+	}else{
+		.print("AVISO! Owner no se ha tomado  ", MedicinaTomada);
+	}
+	.wait(1000).
+
++!comprobarStockMedicina(MedicinaTomada,Q1,[[_,_]|Cdr]) <- 
+	!comprobarStockMedicina(MedicinaTomada,Q1,Cdr).
+
 
 
 
@@ -152,6 +190,10 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 		if(SS<S) {    
 			.print("Esperando a la hora perfecta... Hora perfecta: ",H,":",M,":",S);
 			.print("Esperando en hora actual: ",HH,":",MM,":",SS);
+			E = S-SS;
+			if(E<=5){
+				.send(owner,achieve,esperarHoraPerfecta(E));
+			}
 			!comprobarHora([Med|MedL],H,M,S);
      	}else{
 			!darMedicina([Med|MedL],H,M,S);
@@ -165,8 +207,8 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 
 +!darMedicina([],H,M,S) <-
 	.println("TODA LA MEDICINA TOMADA");
-	-medicActualNurse(_);
-	+medicActualNurse([]).
+	-medicActual(_);
+	+medicActual([]).
 
 +!darMedicina([Med|MedL],H,M,S) <-
 	.time(HH,MM,SS);
@@ -179,10 +221,10 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 	-medicPend(_);
 	+medicPend(L).
 
-+!addMedicinaActual(Medicina): medicActualNurse(Med) <-
++!addMedicinaActual(Medicina): medicActual(Med) <-
 	.concat(Med,[Medicina],L);
-	-medicActualNurse(_);
-	+medicActualNurse(L).
+	-medicActual(_);
+	+medicActual(L).
 
 
 
@@ -194,7 +236,8 @@ medicActualNurse([]). // Donde vamos a manejar los medicamentos que lleva el rob
 		!cogerTodaMedicina(Cdr).
 
 +!cogerTodaMedicina([]) <-
-		.println("He cogido toda la medicina").
+		.println("He cogido toda la medicina");
+		!actualizarStock.
 
 +!medicinaRecibida(L) <- 
 	.println("Medicamentos actualizados");
