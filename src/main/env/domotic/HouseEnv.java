@@ -188,11 +188,7 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
     public boolean executeAction(String ag, Structure action) { 
         
 		System.out.println("["+ag+"] doing: "+action); 
-		//java.util.List<Literal> perceptsOwner = consultPercepts("owner");
-		//java.util.List<Literal> perceptsRobot = consultPercepts("enfermera");  
-		//System.out.println("[owner] has the following percepts: "+perceptsOwner);
-		//System.out.println("[enfermera] has the following percepts: "+perceptsRobot);
-        
+
 		boolean result = false;
         if (action.getFunctor().equals("sit")) {
             String l = action.getTerm(0).toString();
@@ -210,13 +206,10 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 				break;
 			};
 			try {
-				if (ag.equals("enfermera")) {
-					System.out.println("[enfermera] is sitting");
-					result = model.sit(0,dest);
-				} else {
+				if (ag.equals("owner")) {
 					System.out.println("[owner] is sitting");
-					result = model.sit(1,dest);
-				}
+					result = model.sit(model.OWNER,dest);
+				} 
 			} catch (Exception e) {
                e.printStackTrace();
 			}
@@ -286,8 +279,16 @@ public class HouseEnv extends Environment { //Al extender Environment, los metod
 			result = model.getMedicina(medicina,1);
 		} else if (action.getFunctor().equals("mano_en")) {
             result = model.handInMedicina();
-
-        }else {
+		} else if (action.getFunctor().equals("getStock")) {
+			Set<Entry<String,Integer>> med = model.disponibilidadMedicamentos.entrySet();	
+			Iterator<Entry<String, Integer>> it = med.iterator();
+			while(it.hasNext()){
+				Entry<String, Integer> aux = it.next();
+				Literal precept = Literal.parseLiteral("stock("+aux.getKey()+","+aux.getValue()+")");		
+				addPercept(ag, precept);
+			}
+			return true;
+		} else {
             logger.info("Failed to execute action "+action);
         }
 

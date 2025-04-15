@@ -253,6 +253,7 @@ public class HouseModel extends GridWorldModel {
 		return true;
 	}
   
+	
 
 
 	// Now we must see if any furniture area is containing the positions x and y.  
@@ -261,8 +262,11 @@ public class HouseModel extends GridWorldModel {
 		if (Ag == NURSE) {
 			return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) &&
 		           !aSofa.contains(siguiente) && !hasObject(CHAIR,x,y)) && !hayUnaCama(siguiente) && !hasObject(FRIDGE,x,y);
-		} else { 
-			return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
+		} else {
+			Location robotLocation = getAgPos(NURSE); 
+			if (x==robotLocation.x && y==robotLocation.y){
+				return true;
+			}else return (isFree(x,y) && !hasObject(WASHER,x,y) && !aTable.contains(siguiente) && !hasObject(BED,x,y) && !hasObject(FRIDGE,x,y));
 		}
 	}
 	
@@ -324,32 +328,32 @@ public class HouseModel extends GridWorldModel {
 	boolean moveTowards(int Ag, Location dest) {
 		Location posicionAgente = getAgPos(Ag);
 		Location posicionInical = getAgPos(Ag);
-		
-		if (Ag == OWNER && posicionAgente.distance(dest)>0 && posicionAgente.distance(getAgPos(NURSE))==1) { // agent is being blocked by other agent
-			Location robotLocation = getAgPos(NURSE);
-			if (posicionAgente.x < dest.x && robotLocation.x == posicionAgente.x+1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.x > dest.x && robotLocation.x == posicionAgente.x-1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.y < dest.y && robotLocation.y == posicionAgente.y+1) {
-				forceMoveAway(NURSE);
-			} else if (posicionAgente.y > dest.y && robotLocation.y == posicionAgente.y-1) {
-				forceMoveAway(NURSE);
-			}
-			
-		}
+		Location robotLocation = getAgPos(NURSE);
+
 
 		if (posicionAgente.distance(dest)>0) {
 			if (posicionAgente.x < dest.x && canMoveTo(Ag,posicionAgente.x+1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x+1, posicionAgente.y))) {
+				if(posicionInical.x+1==robotLocation.x && posicionInical.y == robotLocation.y){
+					forceMoveAway(NURSE);
+				}
 				posicionAgente.x++;
 				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.x > dest.x && canMoveTo(Ag,posicionAgente.x-1,posicionAgente.y) && !haEstado(Ag, new Location(posicionAgente.x-1, posicionAgente.y))) {
+				if(posicionInical.x-1==robotLocation.x && posicionInical.y == robotLocation.y){
+					forceMoveAway(NURSE);
+				}
 				posicionAgente.x--;
 				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y < dest.y && canMoveTo(Ag,posicionAgente.x,posicionAgente.y+1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y+1))) {
+				if(posicionInical.x==robotLocation.x && posicionInical.y+1 == robotLocation.y){
+					forceMoveAway(NURSE);
+				}
 				posicionAgente.y++;
 				añadirLocalizacionVisitada(Ag, posicionAgente);
 			} else if (posicionAgente.y > dest.y &&  canMoveTo(Ag,posicionAgente.x,posicionAgente.y-1) && !haEstado(Ag, new Location(posicionAgente.x, posicionAgente.y-1))) {  
+				if(posicionInical.x==robotLocation.x && posicionInical.y-1 == robotLocation.y){
+					forceMoveAway(NURSE);
+				}
 				posicionAgente.y--;
 				añadirLocalizacionVisitada(Ag, posicionAgente);
 			}
@@ -372,7 +376,7 @@ public class HouseModel extends GridWorldModel {
 			}
 		}
 		
-		if (esAdyacente(posicionAgente, dest)){
+		if (posicionAgente.distance(dest)==1){
 			localizacionesVisitadas.clear();
 		}
 		
@@ -422,6 +426,8 @@ public class HouseModel extends GridWorldModel {
 			}
 		}
 	}
+
+	
 
 	boolean handInMedicina() {
         if (carryingDrug) {
