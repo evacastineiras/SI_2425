@@ -50,19 +50,12 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 
 
 
-!sit.
+
 
 !send_pauta.
 
 !aMiBola.
 
-!open.
-
-!walk.
-
-!wakeup.
-
-!check_bored.
 
 // Initially Owner could be: sit, opening the door, waking up, walking, ...
 //!sit.   			
@@ -72,10 +65,10 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 
 +!send_pauta : true  <-
 	.findall(pauta(X,Y), pauta(X,Y), L);
-	.print("Mi pauta: ", L);
 	.findall(caducidad(X,Y), caducidad(X,Y), U);
-	.send(enfermera, tell, U);
+	.print("Mi pauta: ", L);
 	.send(enfermera, tell, L);
+	.send(enfermera, tell, U);
 	.send(enfermera,achieve,inicia);
 	!inicia.
 
@@ -88,6 +81,7 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 	!iniciarCaducidad(U);
     !iniciarContadores(L);
     !tomarMedicina.
+
 
 +!iniciarCaducidad([caducidad(X,Y)|Cdr]) <-
 	!!contadorCaducidad(caducidad(X,Y));
@@ -171,11 +165,14 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 	-busy.
 
 
-+!cancelarMedicacion <-
-	.print("Me prohiben ir a por la medicacion");
-	.drop_intention(aPorMedicina);
-	!sit;
++!cancelarMedicacion: busy & .desire(aPorMedicina) <-
+	.print("Me prohiben ir a por la medicacion, estaba yendo a por ella");
+	.drop_desire(aPorMedicina);
+	-busy;
 	!aMiBola.
+
++!cancelarMedicacion <-
+	.print("Me prohiben ir a por la medicacion y no estaba yendo yo").
 
 +!enviarMedicinaPendiente: medicPend(L) <-
 	.send(enfermera,achieve,medicinaRecibida(L)).
@@ -219,26 +216,38 @@ medicActualOwner([]). // Donde vamos a manejar los medicamentos que tiene el own
 	-medicPend(_);
 	+medicPend(L).
 
-+!aMiBola
-   <- .random(X); .wait(X*30000+2000);
-   	  .print("VOY YO A POR LA MEDICINA");
-	  .drop_all_desires;
-	  -busy;
-	  !!tomarMedicina;
-	  !aPorMedicina;
-	  !aMiBola.
++!aMiBola <- 
+   	!!sit;
+	.random(X); .wait(X*10000+2000);
+   	.print("VOY YO A POR LA MEDICINA");
+	!goToMedicina.
+	  
 
-+!esperarHoraPerfecta(T) <-
+	
++!goToMedicina: busy <-
+	 .println("Estoy ocupado pero voy a por la medicina igual");
+	 .drop_desire(sit);
+	 -busy;
+	 !aPorMedicina;
+	 !aMiBola.
+
++!goToMedicina: not busy <-
+	 .println("No estoy ocupado voy a por la medicina");
+	 !aPorMedicina;
+	 !aMiBola.
+
+/*+!esperarHoraPerfecta(T) <-
 	.println(T);
 	if (T<=5){
 		.println("Queda poco para hora, voy a esperar...");
-		.drop_all_desires;
-		-busy;
+		//.drop_desire;
 		.wait(T*1000);
+		.println("pasado");
 		!aMiBola;
 	}else{
 		.println("Es muy pronto para esperar!");
 	}.
+*/
 
 +!wakeup : .my_name(Ag) & not busy <-
 	+busy;
