@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>SI_2425</name>
-	<comment>Project SI_2425 created by Buildship.</comment>
+	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -22,7 +22,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1743350318231</id>
+			<id>1743162517040</id>
 			<name></name>
 			<type>30</type>
 			<matcher>
@@ -31,4 +31,10 @@
 			</matcher>
 		</filter>
 	</filteredResources>
+	<variableList>
+		<variable>
+			<name>bspSchemaVersion</name>
+			<value>0.1.0</value>
+		</variable>
+	</variableList>
 </projectDescription>
